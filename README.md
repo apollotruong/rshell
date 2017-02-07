@@ -2,6 +2,7 @@
 
 Feb 06, 2017
 >Complete rehaul of the skeleton code:
+
 ```
 
 class Rshell {
@@ -131,6 +132,7 @@ virtual string getType() = 0;
 int main(){
     return 0;
 }
+
 ```
 
 Everything still subject to change. Will continue tomorrow with you.
