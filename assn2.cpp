@@ -1,7 +1,9 @@
 #include <iostream>
 
+using namespace std;
+
 int main(){
 
-    std::cout << "hello\namerica\n";
+    cout << "hello\namerica\n";
     return 69;
-}
+} // alright, this is the end of our code, cya later XD
