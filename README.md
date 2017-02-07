@@ -27,10 +27,10 @@ string comment;
 public:
 Comment(){ };   //Default Constructor
 Comment(string cmnt){
-    comment = cmnt;
+comment = cmnt;
 }      //Initializing
 string getType(){
-    return comment;
+return comment;
 }
 };
 
@@ -43,7 +43,7 @@ char* command;
 public:
 Command(char* cmd) : command(cmd) { }
 string getType(){
-    return command;
+return command;
 }
 };
 
@@ -54,9 +54,9 @@ char* argument;
 public:
 Argument(char* arg) : argument(arg){}
 string getType(){
-    return argument;
+return argument;
 }
-    //Handle anything with the suffix “-” e.g. “-a” “-i” “-v”
+//Handle anything with the suffix “-” e.g. “-a” “-i” “-v”
 };
 
 /*  Handle “||”, “&&”, and “;” connectors   */
@@ -67,7 +67,7 @@ string connector;
 public:
 Connector(string cnct): connector(cnct){ }
 string getType(){
-    return connector;
+return connector;
 }
 };
 
@@ -81,45 +81,13 @@ List(){}
 //Default constructor
 
 void print(vector<Rshell*> &v){   // will print the vec<rshell*>
-    for(unsigned i = 0; i < v.size(); i++){
-        cout << v.at(i)->getType();
-        cout << endl;
-    }
+for(unsigned i = 0; i < v.size(); i++){
+cout << v.at(i)->getType();
+cout << endl;
+}
 }
 
 void parse(){
-    if(input == "") return; // if input is empty
-
-    int counter = 0;
-    while(input.at(counter) == ' '){    //used to skip over whitespace
-        counter++;
-    }
-    input = input.substr(counter);    /* cut input at space */
-    if(input.at(0) == '#'){
-        v_rshell.push_back(new Comment("#"));
-        return;
-    }
-
-    /* HANDLE ALL THE CONNECTORS FIRST */
-    for(unsigned i = 0; i < input.length(); i++){
-        if(input.at(i) == '#')          v_connector.push_back(new Connector("#"));
-        if(input.at(i) == ';')          v_connector.push_back(new Connector(";"));
-        if(input.at(i) == '&')
-            if(input.at(i+1) == '&')    v_connector.push_back(new Connector("&&"));
-        if(input.at(i) == '|')
-            if(input.at(i+1) == '|')    v_connector.push_back(new Connector("&&"));
-    }
-    if(numParenthese != 0){
-        cout << "Something went wrong with your parentheses\n";
-        return;
-    }
-    char* cs = (char*)input.c_str(); //convert string to cstr
-    char* tok = strtok(cs, "#;|&()"); //skip these cases
-    while(tok != NULL){ //not space
-        v_rshell.push_back(new Argument(tok)); // push back arguments
-        tok = strtok(NULL, ";#|&()"); // skip these cases again
-    }
-
 }
 
 void execute(){
@@ -130,7 +98,7 @@ virtual string getType() = 0;
 
 
 int main(){
-    return 0;
+return 0;
 }
 
 ```
