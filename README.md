@@ -1,8 +1,8 @@
 # class Rshell
 ```
 protected:
-vector<Parameter>   v_lines;
-vector<Connectors>  v_connectors;
+vector<vector<Parameter*>>   v_lines;
+vector<Connectors*>  v_connectors;
 string  input;
 
 public:
