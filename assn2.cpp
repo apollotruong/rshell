@@ -4,8 +4,8 @@
 
 using namespace std;
 
-class Parameter;
-class Connector;
+class Parameter;                // Pre-definition of Parameter
+class Connector;                // Pre-definition of Connector
 
 class Rshell{
 
@@ -21,6 +21,8 @@ void    read();                 // Loads input with cin, also exits if input is 
 void    parse();                // Organizes input into v_lines & v_connectors
 void    execute();              // Execute v_lines according to v_connectors
                                 // Does logic for v_connectors
+
+
 };
 class Parameter : public Rshell{
 
@@ -31,10 +33,18 @@ string  parameter;
 public:
 Parameter(string s): usage(false), parameter(s){}
 
-string  getParameter(); //
-bool    getUsed();      // Returns usage
-void    trueUsed();     // Change usage = true
-void    falseUsed();    // Change usage = false
+string  getParameter(){ // Returns string parameter
+    return parameter;
+}
+bool    getUsed(){      // Returns usage
+    return usage;
+}
+void    trueUsed(){     // Change usage = true
+    usage = true;
+}
+void    falseUsed(){    // Change usage = false
+    usage = false;
+}
 };
 
 
@@ -46,7 +56,9 @@ string  connector;
 public:
 Connector(string s): connector(s){}
 
-string  getConnector(); // returns connector;
+string  getConnector(){ // returns connector;
+    return connector;
+}
 };
 
 int main(){
