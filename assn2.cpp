@@ -4,30 +4,47 @@
 
 using namespace std;
 
+class Rshell;
 class Parameter;                // Pre-definition of Parameter
 class Connector;                // Pre-definition of Connector
 
 class Rshell{
 
 protected:
-vector< vector <Parameter*> >   v_lines;
-vector<Connector>  v_connectors;
+vector< vector <Rshell*> >   v_lines;
+vector<Rshell*>  v_connectors;
 string  input;
 
 public:
 Rshell(){}                      // Default Constructor
 
-void    read();                 // Loads input with cin, also exits if input is exit
-void    parse();                // Organizes input into v_lines & v_connectors
+void    read(){                 // Loads input with cin, also exits if input is exit
+    string read;
+    cin >> read;               // Working on single commands first.
+    while(cin >> read){
+        if(read == "exit")
+            exit(0);
+
+        input += read;          // concat saved string <- typed string
+        input += ' ';           // Separating with spaces
+    }
+}
+
+void    parse(){                // Organizes input into v_lines & v_connectors
+
+}
+
 void    execute();              // Execute v_lines according to v_connectors
                                 // Does logic for v_connectors
 
 
 };
+
+
 class Parameter : public Rshell{
 
 protected:
-bool    usage = false;
+bool    usage;
 string  parameter;
 
 public:
@@ -61,6 +78,17 @@ string  getConnector(){ // returns connector;
 }
 };
 
+
+
 int main(){
+    /*
+    Rshell* shello = new Rshell();
+    
+    while(1){
+        shello->read();
+        shello->parse();
+        shello();execute();
+    }
+    */
     return 0;
 }
