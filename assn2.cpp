@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -11,31 +12,8 @@ class Connector;                // Pre-definition of Connector
 class Rshell{
 
 protected:
-vector< vector <Rshell*> >   v_lines;
-vector<Rshell*>  v_connectors;
-string  input;
-
 public:
 Rshell(){}                      // Default Constructor
-
-void    read(){                 // Loads input with cin, also exits if input is exit
-    string read;
-    cin >> read;               // Working on single commands first.
-    while(cin >> read){
-        if(read == "exit")
-            exit(0);
-
-        input += read;          // concat saved string <- typed string
-        input += ' ';           // Separating with spaces
-    }
-}
-
-void    parse(){                // Organizes input into v_lines & v_connectors
-
-}
-
-void    execute();              // Execute v_lines according to v_connectors
-                                // Does logic for v_connectors
 
 
 };
@@ -78,6 +56,44 @@ string  getConnector(){ // returns connector;
 }
 };
 
+class List : public Rshell{ // Composite
+protected:
+vector< vector <Rshell*> >   v_lines;
+int lines_counter;
+vector<Rshell*>  v_connectors;
+string  input;
+
+
+public:
+List(){}
+void    read(){                 // Loads input with cin, also exits if input is exit
+    string read;
+    cin >> read;                // Working on single commands first.
+    while(cin >> read){
+        if(read == "exit")
+            exit(0);
+
+        input += read;          // concat saved string <- typed string
+        input += ' ';           // Separating with spaces
+    }
+}
+
+void    parse(){                // Organizes input into v_lines & v_connectors
+    stringstream ss(input);
+    string temp;
+    vector<Rshell*> v_temp;
+    while(ss << temp){
+        v_temp.push_back(new Parameter(temp));
+    }
+
+}
+
+void    execute();              // Execute v_lines according to v_connectors
+                                // Does logic for v_connectors
+
+
+
+};
 
 
 int main(){
