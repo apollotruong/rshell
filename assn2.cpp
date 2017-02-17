@@ -12,17 +12,13 @@
 using namespace std;
 
 class Rshell;                   // Pre-definition of Rshell
-class List;
+class List;						// Pre-definition of List
 class Parameter;                // Pre-definition of Parameter
 class Connector;                // Pre-definition of Connector
 
 class Rshell{
 public:
 Rshell(){}
-// virtual void read();
-// virtual void parse();
-// virtual void execute();
-// virtual int getInputLength();
 virtual ~Rshell(){};
 };
 
@@ -48,7 +44,6 @@ void    falseUsed(){    // Change usage = false
 }
 };
 
-
 class Connector : public Rshell{
 
 protected:
@@ -64,14 +59,14 @@ string  getConnector(){                 // returns connector;
 
 class List : public Rshell{             // Composite
 protected:
-vector<Parameter*> v_lines;                // Vector of Commands
-vector<Connector*> v_connectors;           // Vector of connectors
+vector<Parameter*> v_lines;             // Vector of Commands
+vector<Connector*> v_connectors;        // Vector of connectors
 int lines_counter;                      // counts how many lines in v_lines
 string  input;                          // Whole input, (includes connectors)
 
 public:
 List(): lines_counter(0), input(""){}
-void read(){                         // Loads input with cin, also exits if input is exit
+void read(){                      	  	// Loads input with cin, also exits if input is exit
     string read;
     cout << getenv("PWD") << " $ ";     // Prints working dir
     getline(cin, read);                 // Take whatever they input on a line
@@ -136,10 +131,10 @@ void print(){   // PRINTS v_lines AND v_connectors USED FOR DEBUGGING
         cout << "index " << i << ": " << v_connectors.at(i)->getConnector() << endl;
     }
 }
+
 // Execute v_lines according to v_connectors
 // Does logic for v_connectors
 // forking and execvp will be handled here
-
 void execute(){
 	int i = 0; // lines iterator
 	if(v_connectors.size() == 0){ //this means
@@ -212,7 +207,7 @@ void execute(){
 	}
 	while(v_connectors.size() > 0 ){ // always delete the connector after usingit
 		if(v_connectors.at(0)->getConnector() == ";"){
-      //always execute lines with ';', and then increment v_lines
+      	//always execute lines with ';', and then increment v_lines
 			stringstream ss(v_lines.at(i)->getParameter());
 			istream_iterator<string> begin(ss);
 			istream_iterator<string> end;
@@ -243,9 +238,9 @@ void execute(){
 			}
 
 
-      v_connectors.erase(v_connectors.begin());
-      v_lines.at(i)->trueUsed();
-      i++;
+		v_connectors.erase(v_connectors.begin());
+		v_lines.at(i)->trueUsed();
+		i++;
 		}
 		else if(v_connectors.at(0)->getConnector() == "||"){
 			// execute if Usage of last parameter is false
@@ -332,11 +327,11 @@ void execute(){
 	}
 	return;
 }
+
 int getInputLength(){           // Returns input.length();
     return input.length();
 }
 };
-
 
 int main(){
     while(1){   // Keep looping
