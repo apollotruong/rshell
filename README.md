@@ -46,3 +46,5 @@ Code now finished.
 Slight changes to implementation has made the source code slightly deviate from the skeleton shown above. Changes do not deviate from the class system, only implementation/declaration of some protected variables and public functions.
 
 Known bugs: Special cases using comments gives unexpected/unwanted results. Output a comment line with an output declaring the absence of an executable. Comments in the middle of code are ignored, and not output.
+
+Program can only exit if "exit" command is called in a single line with no other arguments. Cannot be run at the end of other arguments.
