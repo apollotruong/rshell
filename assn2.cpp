@@ -143,22 +143,22 @@ void execute(){
 		i++;
 	}
 	while(v_connectors.size() > 0 ){ // always delete the connector after usingit
-		if(v_connectors.at(0) == ";"){
+		if(v_connectors.at(0)->getConnector() == ";"){
       //always execute lines with ';', and then increment v_lines
       v_connectors.erase(v_connectors.begin());
       i++;
 		}
-		else if(v_connectors.at(0) == "||"){
+		else if(v_connectors.at(0)->getConnector() == "||"){
 			// execute if Usage of last parameter is false
 			i++;
 			v_connectors.erase(v_connectors.begin());
 		}
-		else if(v_connectors.at(0) == "&&"){
+		else if(v_connectors.at(0)->getConnector() == "&&"){
 			//execute if Usage of last parameter is true;
 			i++;
 			v_connectors.erase(v_connectors.begin());
 		}
-		else if(v_connectors.at(0) == "#"){
+		else if(v_connectors.at(0)->getConnector() == "#"){
 			// never execute, simply cout, and move on
       cout << v_lines.at(i)->getParameter() << endl;
 			i++;
