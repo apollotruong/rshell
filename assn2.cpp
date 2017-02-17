@@ -67,10 +67,10 @@ public:
 List(): lines_counter(0), input(""){}
 void read(){                         // Loads input with cin, also exits if input is exit
     string read;
-    cout << getenv("PWD") << " $ ";     // Prints working dir            
+    cout << getenv("PWD") << " $ ";     // Prints working dir
     getline(cin, read);                 // Take whatever they input on a line
     if(read == "exit"){                 // Exit conditional
-            cout << "\nExiting...\n";   
+            cout << "\nExiting...\n";
             exit(0);                    // Exit
     }
     else{input = read;}                 // Sets class private to read
@@ -128,9 +128,45 @@ void print(){   // PRINTS v_lines AND v_connectors USED FOR DEBUGGING
         cout << "index " << i << ": " << v_connectors.at(i)->getConnector() << endl;
     }
 }
-void execute();              // Execute v_lines according to v_connectors
-                                // Does logic for v_connectors
-                                // forking and execbp will be handled here
+// Execute v_lines according to v_connectors
+// Does logic for v_connectors
+// forking and execvp will be handled here
+
+void execute(){
+	int i = 0; // lines iterator
+	if(v_connectors.size() == 0){ //this means
+		// checks if there are any connectors, if not, execute and return
+		return;
+	}
+	else{
+		// if there are connectors, execute vline 0 and move on
+		i++;
+	}
+	while(v_connectors.size() > 0 ){ // always delete the connector after usingit
+		if(v_connectors.at(0) == ";"){
+      //always execute lines with ';', and then increment v_lines
+      v_connectors.erase(v_connectors.begin());
+      i++;
+		}
+		else if(v_connectors.at(0) == "||"){
+			// execute if Usage of last parameter is false
+			i++;
+			v_connectors.erase(v_connectors.begin());
+		}
+		else if(v_connectors.at(0) == "&&"){
+			//execute if Usage of last parameter is true;
+			i++;
+			v_connectors.erase(v_connectors.begin());
+		}
+		else if(v_connectors.at(0) == "#"){
+			// never execute, simply cout, and move on
+      cout << v_lines.at(i)->getParameter() << endl;
+			i++;
+			v_connectors.erase(v_connectors.begin());
+		}
+	}
+	return;
+}
 int getInputLength(){           // Returns input.length();
     return input.length();
 }
