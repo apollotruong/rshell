@@ -10,17 +10,15 @@ class Parameter;                // Pre-definition of Parameter
 class Connector;                // Pre-definition of Connector
 
 class Rshell{
-
-protected:
 public:
+virtual void read();
+virtual void parse();
+virtual void execute();
+virtual ~Rshell();
 Rshell(){}                      // Default Constructor
-
-
 };
 
-
 class Parameter : public Rshell{
-
 protected:
 bool    usage;
 string  parameter;
@@ -51,60 +49,77 @@ string  connector;
 public:
 Connector(string s): connector(s){}
 
-string  getConnector(){ // returns connector;
+string  getConnector(){                 // returns connector;
     return connector;
 }
 };
 
-class List : public Rshell{ // Composite
+class List : public Rshell{             // Composite
 protected:
-vector< vector <Rshell*> >   v_lines;
-int lines_counter;
-vector<Rshell*>  v_connectors;
-string  input;
+vector< vector <Rshell*> >   v_lines;   // Vector of Commands
+vector<Rshell*>  v_connectors;          // Vector of connectors
+int lines_counter;                      // counts how many lines in v_lines
+string  input;                          // Whole input, (includes connectors)
 
 
 public:
-List(){}
-void    read(){                 // Loads input with cin, also exits if input is exit
-    string read;
-    cin >> read;                // Working on single commands first.
-    while(cin >> read){
-        if(read == "exit")
-            exit(0);
-
-        input += read;          // concat saved string <- typed string
-        input += ' ';           // Separating with spaces
+List(): lines_counter(0), input(""){}
+void    read(){                         // Loads input with cin, also exits if input is exit
+    cout << getenv("PWD") << " $ ";     // Prints working dir.
+    string read;                        
+    getline(cin, read);                 // Take whatever they input on a line
+    if(input == "exit"){                // Exit conditional
+            cout << "\nExiting...\n";   
+            exit(0);                    // Exit
     }
+    else{input = read;}                 // Sets class private to read
 }
 
-void    parse(){                // Organizes input into v_lines & v_connectors
+void    parse(){                        // Organizes input into v_lines & v_connectors
     stringstream ss(input);
     string temp;
     vector<Rshell*> v_temp;
     while(ss << temp){
-        v_temp.push_back(new Parameter(temp));
-    }
+        for(int i = 0; i < temp.length(); i++){
+            if(temp.at(i) == ';'){
+                
+                v_temp.push_back(new Connector(temp));
+            }
+            if(temp.at(i) == '#'){
+                
+            }
+            if(temp.at(i) == '&'){
+                if(temp.at(i-1) == '&'){
 
+                }
+            }
+            if(temp.at(i) == '|'){
+                if(temp.at(i-1) == '|'){
+
+                }
+            }
+        }
+    }
 }
 
 void    execute();              // Execute v_lines according to v_connectors
                                 // Does logic for v_connectors
-
-
-
+int getInputLength(){           // Returns input.length();
+    return input.length();
+}
 };
 
 
 int main(){
-    /*
-    Rshell* shello = new Rshell();
-    
-    while(1){
-        shello->read();
-        shello->parse();
-        shello();execute();
+    while(1){   // Keep looping
+        List* shello = new List();  // Make new instance
+        shello->read();             // Read in prompt and read input
+        if(shello->getInputLength() == 0){} // Empty input -> re-loop
+        else{                               // Input is OK
+            shello->parse();                // Parse
+            shello->execute();              // Execute
+        }
+        delete shello;                      // Goodbye shello :-(
     }
-    */
     return 0;
 }
