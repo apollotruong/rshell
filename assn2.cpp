@@ -5,17 +5,19 @@
 
 using namespace std;
 
-class Rshell;
+class Rshell;                   // Pre-definition of Rshell
+class List;
 class Parameter;                // Pre-definition of Parameter
 class Connector;                // Pre-definition of Connector
 
 class Rshell{
 public:
-virtual void read();
-virtual void parse();
-virtual void execute();
-virtual ~Rshell();
-Rshell(){}                      // Default Constructor
+Rshell(){}
+// virtual void read();
+// virtual void parse();
+// virtual void execute();
+// virtual int getInputLength();
+virtual ~Rshell(){};
 };
 
 class Parameter : public Rshell{
@@ -56,53 +58,77 @@ string  getConnector(){                 // returns connector;
 
 class List : public Rshell{             // Composite
 protected:
-vector< vector <Rshell*> >   v_lines;   // Vector of Commands
-vector<Rshell*>  v_connectors;          // Vector of connectors
+vector<Parameter*> v_lines;                // Vector of Commands
+vector<Connector*> v_connectors;           // Vector of connectors
 int lines_counter;                      // counts how many lines in v_lines
 string  input;                          // Whole input, (includes connectors)
 
-
 public:
 List(): lines_counter(0), input(""){}
-void    read(){                         // Loads input with cin, also exits if input is exit
-    cout << getenv("PWD") << " $ ";     // Prints working dir.
-    string read;                        
+void read(){                         // Loads input with cin, also exits if input is exit
+    string read;
+    cout << getenv("PWD") << " $ ";     // Prints working dir            
     getline(cin, read);                 // Take whatever they input on a line
-    if(input == "exit"){                // Exit conditional
+    if(read == "exit"){                 // Exit conditional
             cout << "\nExiting...\n";   
             exit(0);                    // Exit
     }
     else{input = read;}                 // Sets class private to read
 }
 
-void    parse(){                        // Organizes input into v_lines & v_connectors
-    stringstream ss(input);
-    string temp;
-    vector<Rshell*> v_temp;
-    while(ss << temp){
-        for(int i = 0; i < temp.length(); i++){
-            if(temp.at(i) == ';'){
-                
-                v_temp.push_back(new Connector(temp));
+void parse(){                           // Organizes input into v_lines & v_connectors
+    if(getInputLength() == 0){          // Input length should not be 0
+        return;
+    }
+    int whitespace = 0;
+    while(input.at(whitespace)  == ' '){   // Handle all leading whitespace
+        whitespace++;
+    }
+    input = input.substr(whitespace);
+    if(input.at(0) == '#'){                // If its a comment, do nothing
+        v_connectors.push_back(new Connector("#"));
+        return;
+    }
+    for(unsigned i = 0; i < input.size(); i++){                 // Handle ';'
+        if(input.at(i) == ';'){
+            v_connectors.push_back(new Connector(";"));
+        }
+        else if(input.at(i) == '&'){
+            if(input.at(i+1) == '&'){
+                v_connectors.push_back(new Connector("&&"));    // Handle "&&"
             }
-            if(temp.at(i) == '#'){
-                
-            }
-            if(temp.at(i) == '&'){
-                if(temp.at(i-1) == '&'){
-
-                }
-            }
-            if(temp.at(i) == '|'){
-                if(temp.at(i-1) == '|'){
-
-                }
+        }
+        else if(input.at(i) == '|'){
+            if(input.at(i+1) == '|'){
+                v_connectors.push_back(new Connector("||"));    // Handle "||"
             }
         }
     }
-}
+    char* input_c = (char*)input.c_str();
+    char* tok = strtok(input_c, ";|&");
 
-void    execute();              // Execute v_lines according to v_connectors
+    while(tok != NULL){
+        string temp = tok;
+        whitespace = 0;                 // Removing whitespace
+        while (temp.at(whitespace) == ' '){
+            whitespace++;
+        }
+        temp = temp.substr(whitespace);
+        v_lines.push_back(new Parameter(temp));
+        tok = strtok(NULL, ";|&");
+    }
+}
+void print(){   // PRINTS v_lines AND v_connectors USED FOR DEBUGGING
+    cout << "v_lines:" << endl;
+    for(unsigned i = 0; i < v_lines.size(); i++){
+        cout << "index " << i << ": " << v_lines.at(i)->getParameter() << endl;
+    }
+    cout << endl << "v_connectors:" << endl;
+    for(unsigned i = 0; i < v_connectors.size(); i++){
+        cout << "index " << i << ": " << v_connectors.at(i)->getConnector() << endl;
+    }
+}
+void execute();              // Execute v_lines according to v_connectors
                                 // Does logic for v_connectors
                                 // forking and execbp will be handled here
 int getInputLength(){           // Returns input.length();
@@ -118,7 +144,8 @@ int main(){
         if(shello->getInputLength() == 0){} // Empty input -> re-loop
         else{                               // Input is OK
             shello->parse();                // Parse
-            shello->execute();              // Execute
+            shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
+            // shello->execute();              // Execute
         }
         delete shello;                      // Goodbye shello :-(
     }
