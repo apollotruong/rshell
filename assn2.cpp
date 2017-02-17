@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 #include <stdio.h>
 #include <unistd.h>
@@ -90,10 +91,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
         whitespace++;
     }
     input = input.substr(whitespace);
-    if(input.at(0) == '#'){                // If its a comment, do nothing
-        v_connectors.push_back(new Connector("#"));
-        return;
-    }
+
     for(unsigned i = 0; i < input.size(); i++){                 // Handle ';'
         if(input.at(i) == ';'){
             v_connectors.push_back(new Connector(";"));
@@ -108,9 +106,14 @@ void parse(){                           // Organizes input into v_lines & v_conn
                 v_connectors.push_back(new Connector("||"));    // Handle "||"
             }
         }
+        else if(input.at(i) == '#'){                // If its a comment, do nothing
+            if(input.at(i+1) == '#'){
+        	v_connectors.push_back(new Connector("#"));
+            }
+        }
     }
     char* input_c = (char*)input.c_str();
-    char* tok = strtok(input_c, ";|&");
+    char* tok = strtok(input_c, ";|&#");
 
     while(tok != NULL){
         string temp = tok;
@@ -120,7 +123,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
         }
         temp = temp.substr(whitespace);
         v_lines.push_back(new Parameter(temp));
-        tok = strtok(NULL, ";|&");
+        tok = strtok(NULL, ";|&#");
     }
 }
 void print(){   // PRINTS v_lines AND v_connectors USED FOR DEBUGGING
@@ -141,44 +144,188 @@ void execute(){
 	int i = 0; // lines iterator
 	if(v_connectors.size() == 0){ //this means
 		// checks if there are any connectors, if not, execute and return
-
-    // working on executing this
-    stringstream ss(v_lines.at(0)->getParameter());
+		stringstream ss(v_lines.at(0)->getParameter());
 		istream_iterator<string> begin(ss);
 		istream_iterator<string> end;
 		vector<string> vstrings(begin, end);
-    // vstrings is a parsed version of v_lines(0) where the line is separated
-    // by words
 		vector<char *> commandVector;
 		for(int x = 0; x < vstrings.size(); x++){
-      // CANNOT PUSHBACK commandVector by vstrings IDK WHY
-		    //commandVector.push_back(vstrings.at(x));
-      }
+			char *temp = new char[vstrings.at(x).length() + 1];
+			strcpy(temp, vstrings.at(x).c_str());
+			commandVector.push_back(temp);
+		}
+		commandVector.push_back(NULL);
+		char **command = &commandVector[0];
+
+		pid_t pid;
+		int status;
+		if((pid = fork()) < 0){
+			cout << "Error: failed to fork child process" << endl;
+			exit(1);
+		}
+		else if(pid == 0){
+			v_lines.at(i)->trueUsed();
+			if(execvp(command[0], command) < 0){
+				cout << "Error: nothing to execute" <<endl;
+				exit(1);
+			}
+		}
+		else{
+			while(wait(&status) != pid); // wait for parent
+		}
+
 		return;
 	}
 	else{
 		// if there are connectors, execute vline 0 and move on
+		stringstream ss(v_lines.at(i)->getParameter());
+		istream_iterator<string> begin(ss);
+		istream_iterator<string> end;
+		vector<string> vstrings(begin, end);
+		vector<char *> commandVector;
+		for(int x = 0; x < vstrings.size(); x++){
+			char *temp = new char[vstrings.at(x).length() + 1];
+			strcpy(temp, vstrings.at(x).c_str());
+			commandVector.push_back(temp);
+		}
+		commandVector.push_back(NULL);
+		char **command = &commandVector[0];
+
+		pid_t pid;
+		int status;
+		if((pid = fork()) < 0){
+			cout << "Error: failed to fork child process" << endl;
+			exit(1);
+		}
+		else if(pid == 0){
+			v_lines.at(i)->trueUsed();
+			if(execvp(command[0], command) < 0){
+				cout << "Error: failed to execute" <<endl;
+				exit(1);
+			}
+		}
+		else{
+			while(wait(&status) != pid); // wait for parent
+		}
+		v_lines.at(i)->trueUsed();
 		i++;
 	}
 	while(v_connectors.size() > 0 ){ // always delete the connector after usingit
 		if(v_connectors.at(0)->getConnector() == ";"){
       //always execute lines with ';', and then increment v_lines
+			stringstream ss(v_lines.at(i)->getParameter());
+			istream_iterator<string> begin(ss);
+			istream_iterator<string> end;
+			vector<string> vstrings(begin, end);
+			vector<char *> commandVector;
+			for(int x = 0; x < vstrings.size(); x++){
+				char *temp = new char[vstrings.at(x).length() + 1];
+				strcpy(temp, vstrings.at(x).c_str());
+				commandVector.push_back(temp);
+			}
+			commandVector.push_back(NULL);
+			char **command = &commandVector[0];
+
+			pid_t pid;
+			int status;
+			if((pid = fork()) < 0){
+				cout << "Error: failed to fork child process" << endl;
+				exit(1);
+			}
+			else if(pid == 0){
+				if(execvp(command[0], command) < 0){
+					cout << "Error: failed to execute" <<endl;
+					exit(1);
+				}
+			}
+			else{
+				while(wait(&status) != pid); // wait for parent
+			}
+
+
       v_connectors.erase(v_connectors.begin());
+      v_lines.at(i)->trueUsed();
       i++;
 		}
 		else if(v_connectors.at(0)->getConnector() == "||"){
 			// execute if Usage of last parameter is false
+			if(!v_lines.at(i-1)->getUsed()){
+			stringstream ss(v_lines.at(i)->getParameter());
+			istream_iterator<string> begin(ss);
+			istream_iterator<string> end;
+			vector<string> vstrings(begin, end);
+			vector<char *> commandVector;
+			for(int x = 0; x < vstrings.size(); x++){
+				char *temp = new char[vstrings.at(x).length() + 1];
+				strcpy(temp, vstrings.at(x).c_str());
+				commandVector.push_back(temp);
+			}
+			commandVector.push_back(NULL);
+			char **command = &commandVector[0];
+
+			pid_t pid;
+			int status;
+			if((pid = fork()) < 0){
+				cout << "Error: failed to fork child process" << endl;
+				exit(1);
+			}
+			else if(pid == 0){
+				if(execvp(command[0], command) < 0){
+					cout << "Error: failed to execute" <<endl;
+					exit(1);
+				}
+			}
+			else{
+				while(wait(&status) != pid); // wait for parent
+			}
+			v_lines.at(i)->trueUsed();
+    }
+    else v_lines.at(i)->falseUsed();
 			i++;
 			v_connectors.erase(v_connectors.begin());
 		}
 		else if(v_connectors.at(0)->getConnector() == "&&"){
 			//execute if Usage of last parameter is true;
+
+
+			if(v_lines.at(i-1)->getUsed() == true){
+			stringstream ss(v_lines.at(i)->getParameter());
+			istream_iterator<string> begin(ss);
+			istream_iterator<string> end;
+			vector<string> vstrings(begin, end);
+			vector<char *> commandVector;
+			for(int x = 0; x < vstrings.size(); x++){
+				char *temp = new char[vstrings.at(x).length() + 1];
+				strcpy(temp, vstrings.at(x).c_str());
+				commandVector.push_back(temp);
+			}
+			commandVector.push_back(NULL);
+			char **command = &commandVector[0];
+
+			pid_t pid;
+			int status;
+			if((pid = fork()) < 0){
+				cout << "Error: failed to fork child process" << endl;
+				exit(1);
+			}
+			else if(pid == 0){
+				v_lines.at(i)->trueUsed();
+				if(execvp(command[0], command) < 0){
+					cout << "Error: failed to execute" <<endl;
+					exit(1);
+				}
+			}
+			else{
+				while(wait(&status) != pid); // wait for parent
+			}
+			v_lines.at(i)->trueUsed();
 			i++;
 			v_connectors.erase(v_connectors.begin());
+			}
 		}
 		else if(v_connectors.at(0)->getConnector() == "#"){
 			// never execute, simply cout, and move on
-      cout << v_lines.at(i)->getParameter() << endl;
+      cout << "#" << v_lines.at(i)->getParameter() << endl;
 			i++;
 			v_connectors.erase(v_connectors.begin());
 		}
@@ -198,8 +345,8 @@ int main(){
         if(shello->getInputLength() == 0){} // Empty input -> re-loop
         else{                               // Input is OK
             shello->parse();                // Parse
-            shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
-            // shello->execute();              // Execute
+            // shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
+            shello->execute();              // Execute
         }
         delete shello;                      // Goodbye shello :-(
     }
