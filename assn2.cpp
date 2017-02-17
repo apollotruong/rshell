@@ -3,6 +3,11 @@
 #include <vector>
 #include <sstream>
 
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+
 using namespace std;
 
 class Rshell;                   // Pre-definition of Rshell
@@ -136,6 +141,19 @@ void execute(){
 	int i = 0; // lines iterator
 	if(v_connectors.size() == 0){ //this means
 		// checks if there are any connectors, if not, execute and return
+
+    // working on executing this
+    stringstream ss(v_lines.at(0)->getParameter());
+		istream_iterator<string> begin(ss);
+		istream_iterator<string> end;
+		vector<string> vstrings(begin, end);
+    // vstrings is a parsed version of v_lines(0) where the line is separated
+    // by words
+		vector<char *> commandVector;
+		for(int x = 0; x < vstrings.size(); x++){
+      // CANNOT PUSHBACK commandVector by vstrings IDK WHY
+		    //commandVector.push_back(vstrings.at(x));
+      }
 		return;
 	}
 	else{
