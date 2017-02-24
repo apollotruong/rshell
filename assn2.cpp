@@ -314,9 +314,9 @@ void execute(){
 				while(wait(&status) != pid); // wait for parent
 			}
 			v_lines.at(i)->trueUsed();
-			i++;
-			v_connectors.erase(v_connectors.begin());
 			}
+      i++;
+			v_connectors.erase(v_connectors.begin());
 		}
 		else if(v_connectors.at(0)->getConnector() == "#"){
 			// never execute, simply cout, and move on
