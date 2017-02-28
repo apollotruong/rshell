@@ -2,8 +2,11 @@
 #include <cstdlib>
 #include <vector>
 #include <sstream>
+#include <istream>
 #include <algorithm>
-
+#include <string>
+#include <cstring>
+#include <iterator>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
