@@ -1,3 +1,23 @@
+# Newer Notes (hw3)
+
+#### Functionality to add
+
+- test function
+
+    - '-e'    checks if the file/directory exists
+    - '-f'    checks if the file/directory exists and is a regular file
+    - '-d'    checks if the file/directory exists and is a directory
+- ( ) parentheses precedence
+
+# Notes (hw2)
+Code now finished.
+Slight changes to implementation has made the source code slightly deviate from the skeleton shown above. Changes do not deviate from the class system, only implementation/declaration of some protected variables and public functions.
+
+Known bugs: Special cases using comments gives unexpected/unwanted results. Output a comment line with an output declaring the absence of an executable. Comments in the middle of code are ignored, and not output.
+
+Program can only exit if "exit" command is called in a single line with no other arguments. Cannot be run at the end of other arguments.
+
+Exit function works when user calls it, but a scipt (exit.sh) with exit as its only code for some reason will not exit out of file.
 
 # class Rshell
 ```
@@ -43,11 +63,3 @@ string  getConnector(); // returns connector;
 
 # Notes:
 
-Code now finished.
-Slight changes to implementation has made the source code slightly deviate from the skeleton shown above. Changes do not deviate from the class system, only implementation/declaration of some protected variables and public functions.
-
-Known bugs: Special cases using comments gives unexpected/unwanted results. Output a comment line with an output declaring the absence of an executable. Comments in the middle of code are ignored, and not output.
-
-Program can only exit if "exit" command is called in a single line with no other arguments. Cannot be run at the end of other arguments.
-
-Exit function works when user calls it, but a scipt (exit.sh) with exit as its only code for some reason will not exit out of file.

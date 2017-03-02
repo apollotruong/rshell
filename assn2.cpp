@@ -11,14 +11,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <vector>
+
 /**
 */
 using namespace std;
 
-class Rshell;                   // Pre-definition of Rshell
+class Connector;                // Pre-definition of Connector
 class List;						// Pre-definition of List
 class Parameter;                // Pre-definition of Parameter
-class Connector;                // Pre-definition of Connector
+class Rshell;                   // Pre-definition of Rshell
 
 class Rshell{
 public:
