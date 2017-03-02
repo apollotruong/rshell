@@ -112,15 +112,28 @@ void parse(){                           // Organizes input into v_lines & v_conn
             }
         }
 		else if(input.at(i) == '('){
-			v_connectors.push_back(new Connector("("));
+			v_connectors.push_back(new Connector("(")); // check for a (
 			p_counter++;
 		}
 		else if(input.at(i) == ')'){
-			v_connectors.push_back(new Connector(")"));
+			v_connectors.push_back(new Connector(")")); // check for a )
 			p_counter--;
 		}
-
-		if(p_counter != 0){
+		else if(input.at(i) == '['){
+			v_connectors.push_back(new Connector("[")); // if it's a call for [test]
+			for(unsigned j = 0; j < input.size(); j++){ // search for ] 
+				if(input.at(j) == ']'){
+					input.replace(j,1,"");				// replaces [] bounds with test
+					input.replace(i,1," test ");
+					break;
+				}
+			}
+			if(input.at(i) == '['){
+				cout << "Some error with [].";
+				return;
+			}
+		}
+		if(p_counter != 0){ // missing a )
 			cout << "There was a parenthesis error () !\n";
 			return;
 		}
@@ -138,6 +151,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
         v_lines.push_back(new Parameter(temp));
         tok = strtok(NULL, ";|&#");
     }
+	cout << "INPUT IS: " << endl << input << endl;
 }
 void print(){   // PRINTS v_lines AND v_connectors USED FOR DEBUGGING
     cout << "v_lines:" << endl;
