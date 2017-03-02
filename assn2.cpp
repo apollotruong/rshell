@@ -91,7 +91,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
         whitespace++;
     }
     input = input.substr(whitespace);
-
+	int p_counter = 0;
     for(unsigned i = 0; i < input.size(); i++){                 // Handle ';'
         if(input.at(i) == ';'){
             v_connectors.push_back(new Connector(";"));
@@ -111,6 +111,19 @@ void parse(){                           // Organizes input into v_lines & v_conn
         	v_connectors.push_back(new Connector("#"));
             }
         }
+		else if(input.at(i) == '('){
+			v_connectors.push_back(new Connector("("));
+			p_counter++;
+		}
+		else if(input.at(i) == ')'){
+			v_connectors.push_back(new Connector(")"));
+			p_counter--;
+		}
+
+		if(p_counter != 0){
+			cout << "There was a parenthesis error () !\n";
+			return;
+		}
     }
     char* input_c = (char*)input.c_str();
     char* tok = strtok(input_c, ";|&#");
