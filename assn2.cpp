@@ -144,6 +144,8 @@ void execute(){
 	int i = 0; // lines iterator
 	if(v_connectors.size() == 0){ //this means
 		// checks if there are any connectors, if not, execute and return
+
+    // the following parses each line into seperate words to use each as an arguement
 		stringstream ss(v_lines.at(0)->getParameter());
 		istream_iterator<string> begin(ss);
 		istream_iterator<string> end;
@@ -157,6 +159,8 @@ void execute(){
 		commandVector.push_back(NULL);
 		char **command = &commandVector[0];
 
+
+    // Using forking and execvp to execute each seperately parsed arguement
 		pid_t pid;
 		int status;
 		if((pid = fork()) < 0){
@@ -178,6 +182,8 @@ void execute(){
 	}
 	else{
 		// if there are connectors, execute vline 0 and move on
+
+    // parses current vline into command[] (seperate words)
 		stringstream ss(v_lines.at(i)->getParameter());
 		istream_iterator<string> begin(ss);
 		istream_iterator<string> end;
@@ -191,6 +197,7 @@ void execute(){
 		commandVector.push_back(NULL);
 		char **command = &commandVector[0];
 
+    // use forking and execvp on each parsed word in command[]
 		pid_t pid;
 		int status;
 		if((pid = fork()) < 0){
@@ -207,12 +214,18 @@ void execute(){
 		else{
 			while(wait(&status) != pid); // wait for parent
 		}
-		v_lines.at(i)->trueUsed();
+		v_lines.at(i)->trueUsed(); //since we execute this vline, mark it as used
 		i++;
 	}
+
+  // keep executing vlines until there are no more connectors
 	while(v_connectors.size() > 0 ){ // always delete the connector after usingit
+
+    // if connector == ;
 		if(v_connectors.at(0)->getConnector() == ";"){
       	//always execute lines with ';', and then increment v_lines
+
+      // parse current vline into its arguements, places them all in command[]
 			stringstream ss(v_lines.at(i)->getParameter());
 			istream_iterator<string> begin(ss);
 			istream_iterator<string> end;
@@ -225,6 +238,8 @@ void execute(){
 			}
 			commandVector.push_back(NULL);
 			char **command = &commandVector[0];
+
+      // uses forking and execvp to execute everything in commmand[]
 
 			pid_t pid;
 			int status;
@@ -243,12 +258,16 @@ void execute(){
 			}
 
 
-		v_connectors.erase(v_connectors.begin());
-		v_lines.at(i)->trueUsed();
-		i++;
+		v_connectors.erase(v_connectors.begin()); // delete current connector
+		v_lines.at(i)->trueUsed(); //since vline was used, mark as used
+		i++; //iterate to next vline
 		}
+
+    // if next connector == ||
 		else if(v_connectors.at(0)->getConnector() == "||"){
 			// execute if Usage of last parameter is false
+
+      // parses current vline into arguements, stored in command[]
 			if(!v_lines.at(i-1)->getUsed()){
 			stringstream ss(v_lines.at(i)->getParameter());
 			istream_iterator<string> begin(ss);
@@ -263,6 +282,7 @@ void execute(){
 			commandVector.push_back(NULL);
 			char **command = &commandVector[0];
 
+      // use forking and execp to execute all arguements in command[]
 			pid_t pid;
 			int status;
 			if((pid = fork()) < 0){
@@ -278,16 +298,18 @@ void execute(){
 			else{
 				while(wait(&status) != pid); // wait for parent
 			}
-			v_lines.at(i)->trueUsed();
+			v_lines.at(i)->trueUsed(); //mark used since it was executed
     }
-    else v_lines.at(i)->falseUsed();
-			i++;
-			v_connectors.erase(v_connectors.begin());
+    else v_lines.at(i)->falseUsed();// mark false if not
+			i++; // iterate vlines
+			v_connectors.erase(v_connectors.begin()); //erase current connector
 		}
+
+    // if next connector == &&
 		else if(v_connectors.at(0)->getConnector() == "&&"){
 			//execute if Usage of last parameter is true;
 
-
+      // parses vline into command[]
 			if(v_lines.at(i-1)->getUsed() == true){
 			stringstream ss(v_lines.at(i)->getParameter());
 			istream_iterator<string> begin(ss);
@@ -302,6 +324,8 @@ void execute(){
 			commandVector.push_back(NULL);
 			char **command = &commandVector[0];
 
+
+      // use forking and execvp to execute all arguements in command[]
 			pid_t pid;
 			int status;
 			if((pid = fork()) < 0){
@@ -318,16 +342,17 @@ void execute(){
 			else{
 				while(wait(&status) != pid); // wait for parent
 			}
-			v_lines.at(i)->trueUsed();
+			v_lines.at(i)->trueUsed(); // executed, so mark as used
 			}
-      i++;
-			v_connectors.erase(v_connectors.begin());
+      i++; //iterate through vlines
+			v_connectors.erase(v_connectors.begin()); //erase current connector
 		}
+    // if connector is a comment
 		else if(v_connectors.at(0)->getConnector() == "#"){
 			// never execute, simply cout, and move on
       cout << "#" << v_lines.at(i)->getParameter() << endl;
-			i++;
-			v_connectors.erase(v_connectors.begin());
+			i++; // iterate vlines
+			v_connectors.erase(v_connectors.begin()); // erase connector
 		}
 	}
 	return;
