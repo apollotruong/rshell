@@ -1,65 +1,44 @@
-# Newer Notes (hw3)
+# rshell
+Patrick Aben, Apollo Truong
 
-#### Functionality to add
+# Overview:
 
-- test function
+ A clone of bash made in C++. Able to handle multiple commands, and comments through one line. Able to handle basic linux commands such as `ls`, `cd` , `mkdir`, `rm`, etc. Until the user types `exit` to exit the program. Multiple commands will be handled by the `;` connector, the logic for `||` (OR) and `&&` (AND) is added as well. `||` is handled by connecting two lines together, and the next line of code will be either run or not run depending on the first command (TRUE||FALSE) or (FALSE||TRUE) . `&&` Will be handled by having the first command run, the connecting command will also run. Anything after a `#` (comment) will be ignored. Precedent operators are also be included if you would like to use them `(` and `)`.This program will also run the test command, but will **ALSO** echo to the terminal if the path of a file or directory exists, `(TRUE)`, or if it does not exist `(FALSE)`. *Wow!*
 
-    - '-e'    checks if the file/directory exists
-    - '-f'    checks if the file/directory exists and is a regular file
-    - '-d'    checks if the file/directory exists and is a directory
-- ( ) parentheses precedence
+# Some Examples
 
-# Notes (hw2)
-Code now finished.
-Slight changes to implementation has made the source code slightly deviate from the skeleton shown above. Changes do not deviate from the class system, only implementation/declaration of some protected variables and public functions.
-
-Known bugs: Special cases using comments gives unexpected/unwanted results. Output a comment line with an output declaring the absence of an executable. Comments in the middle of code are ignored, and not output.
-
-Program can only exit if "exit" command is called in a single line with no other arguments. Cannot be run at the end of other arguments.
-
-Exit function works when user calls it, but a scipt (exit.sh) with exit as its only code for some reason will not exit out of file.
-
-# class Rshell
+Example #1
 ```
-protected:
-vector<vector<Parameter*>>   v_lines;
-vector<Connectors*>  v_connectors;
-string  input;
-
-public:
-Rshell(){}                      // Default Constructor
-
-void    read();                 // Loads input with cin, also exits if input is exit
-void    parse();                // Organizes input into v_lines & v_connectors
-void    execute();              // Execute v_lines according to v_connectors
-                                // Does logic for v_connectors
+$ echo A && echo B || echo C && echo D
+A
+B
+D
+```
+Example #2
+```
+$ echo A; echo B || echo C;
+A
+B
+```
+Example #3
+```
+$ ( echo A && echo B ) || ( echo C && echo D )
+A
+B
 ```
 
-# class Parameter : public Rshell
-```
-protected:
-bool    usage = false;
-string  parameter;
+# Running Instructions
 
-public:
-Parameter(string s): usage(false), parameter(s){}
+`git clone https://github.com/apollotruong/rshell.git`
 
-string  getParameter(); //
-bool    getUsed();      // Returns usage
-void    trueUsed();     // Change usage = true
-void    falseUsed();    // Change usage = false
-```
+`cd rshell`
 
-# class Connector : public Rshell
-```
-protected:
-string  connector;
+`git checkout hw3`
 
-public:
-Connector(string s): valid(false), connector(s){}
+`make`
 
-string  getConnector(); // returns connector;
-```
+`bin/rshell`
 
-# Notes:
+# Known Bugs
 
+- *hold up!*
