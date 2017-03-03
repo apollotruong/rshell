@@ -326,10 +326,15 @@ void execute(){
 				while(wait(&status) != pid); // wait for parent
 			}
 			v_lines.at(i)->trueUsed(); // executed, so mark as used
+      i++;
+      v_connectors.erase(v_connectors.begin()); // erase currrent connector
     }
-    else v_lines.at(i)->falseUsed();
-			i++;
+
+
+    else{ // if the v_line before || was used, DELETE THIS INSTANCE OF v_line
+      v_lines.erase(v_lines.begin()+i);
 			v_connectors.erase(v_connectors.begin()); // erase current connector
+    }
 		}
 
     //if connector is &&
@@ -378,10 +383,8 @@ void execute(){
 
     // if connector is a comment indicator
 		else if(v_connectors.at(0)->getConnector() == "#"){
-			// never execute, simply cout, and move on
-      cout << "#" << v_lines.at(i)->getParameter() << endl;
-			i++;
-			v_connectors.erase(v_connectors.begin()); // erase current connector
+			// never execute move on
+      break;
 		}
 	}
 	return;
