@@ -129,7 +129,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
 					for(unsigned j = 0; j < input.size(); j++){ // search for ]
 						if(input.at(j) == ']'){
 							input.replace(j,1,"");				// replaces [] bounds with test
-							input.replace(i,1," test ");
+							input.replace(i,1,"test");
 							break;
 						}
 					}
