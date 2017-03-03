@@ -278,24 +278,32 @@ void execute(){
 		commandVector.push_back(NULL);
 		char **command = &commandVector[0];
 
-    // using forking and execvp to execute each seperately parsed argument
-		pid_t pid;
-		int status;
-		if((pid = fork()) < 0){
-			cout << "Error: failed to fork child process" << endl;
-			exit(1);
-		}
-		else if(pid == 0){
-			if(execvp(command[0], command) < 0){
-				cout << "Error: failed to execute" <<endl;
-				exit(1);
-			}
-		}
-		else{
-			while(wait(&status) != pid); // wait for parent
-		}
+    // cout << "commandVector[0] : " << commandVector[0] << endl;
+    // cout << "commandVector[1] : " << commandVector[1] << endl;
+    // cout << "commandVector[2] : " << commandVector[2] << endl;
+    // test(commandVector[1], commandVector[2]);
+    if(commandVector[0] == testchar){ // if the command is test, run test()
+      test(commandVector[1], commandVector[2]);
+    }
+    else{ // if not test, run execvp
+      // using forking and execvp to execute each seperately parsed argument
+  		pid_t pid;
+  		int status;
+  		if((pid = fork()) < 0){
+  			cout << "Error: failed to fork child process" << endl;
+  			exit(1);
+  		}
+  		else if(pid == 0){
+  			if(execvp(command[0], command) < 0){
+  				cout << "Error: failed to execute" <<endl;
+  				exit(1);
+  			}
+  		}
+  		else{
+  			while(wait(&status) != pid); // wait for parent
+  		}
+    }
   }
-
 
 
   return;
