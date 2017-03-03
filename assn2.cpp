@@ -7,6 +7,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <string>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -271,6 +272,40 @@ void execute(){
 
 
   return;
+}
+
+/* Functon that prints (TRUE) or (FALSE) depending on the existence of a file / directory
+		takes in a flag:	 "", "-e", "-f", or "-d"
+		also takes in path of file/directory 
+*/
+void test(const string& flags, const string& path_name){ 
+	char* path_name_c = (char*)path_name.c_str();
+	struct stat s;
+
+	if(flags == "-e" || flags == ""){ // checks for -e
+		if(stat(path_name_c, &s) == 0){ // if this file exists
+			cout << "(TRUE)" << endl;
+			return;
+		}
+	}
+	else if(flags == "-f"){ // checks for -f
+		stat(path_name_c, &s); // if this file is a regular file
+		if(S_ISREG(s.st_mode)){
+			cout << "(TRUE)" << endl;
+			return;
+		}
+	}
+	else if(flags == "-d"){ // checks for -d
+		stat(path_name_c, &s); // if this file is a directory
+		if(S_ISDIR(s.st_mode)){
+			cout << "(TRUE)" << endl;
+			return;
+		}
+	}
+	else{ // otherwise false;
+		cout << "(FALSE)" << endl;
+		return;
+	}
 }
 
 int getInputLength(){           // Returns input.length();
