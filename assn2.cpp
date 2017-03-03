@@ -107,9 +107,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
             }
         }
         else if(input.at(i) == '#'){                // If its a comment, do nothing
-            if(input.at(i+1) == '#'){
-        			v_connectors.push_back(new Connector("#"));
-            }
+            return;
         }
 				else if(input.at(i) == '('){
 					v_connectors.push_back(new Connector("(")); // check for a (
@@ -140,7 +138,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
 			return;
 		}
     char* input_c = (char*)input.c_str();
-    char* tok = strtok(input_c, ";|&#");
+    char* tok = strtok(input_c, ";|&#()");
 
     while(tok != NULL){
         string temp = tok;
@@ -150,7 +148,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
         }
         temp = temp.substr(whitespace);
         v_lines.push_back(new Parameter(temp));
-        tok = strtok(NULL, ";|&#");
+        tok = strtok(NULL, ";|&#()");
     }
 	// cout << "INPUT IS: " << endl << input << endl;
 }
@@ -405,7 +403,8 @@ int main(){
         else{                               // Input is OK
             shello->parse();                // Parse
             shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
-            shello->execute();              // Execute
+            cout << "skip execute" << endl;
+						// shello->execute();              // Execute
         }
         delete shello;                      // Goodbye shello :-(
     }
