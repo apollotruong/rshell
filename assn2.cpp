@@ -278,7 +278,7 @@ void execute(){
 		takes in a flag:	 "", "-e", "-f", or "-d"
 		also takes in path of file/directory 
 */
-void test(const string& flags, const string& path_name){ 
+void test(const string& flags, const string& path_name){
 	char* path_name_c = (char*)path_name.c_str();
 	struct stat s;
 
@@ -287,12 +287,20 @@ void test(const string& flags, const string& path_name){
 			cout << "(TRUE)" << endl;
 			return;
 		}
+		else{ // otherwise false;
+		cout << "(FALSE)" << endl;
+		return;
+		}
 	}
 	else if(flags == "-f"){ // checks for -f
 		stat(path_name_c, &s); // if this file is a regular file
 		if(S_ISREG(s.st_mode)){
 			cout << "(TRUE)" << endl;
 			return;
+		}
+		else{ // otherwise false;
+		cout << "(FALSE)" << endl;
+		return;
 		}
 	}
 	else if(flags == "-d"){ // checks for -d
@@ -301,10 +309,10 @@ void test(const string& flags, const string& path_name){
 			cout << "(TRUE)" << endl;
 			return;
 		}
-	}
-	else{ // otherwise false;
+		else{ // otherwise false;
 		cout << "(FALSE)" << endl;
 		return;
+		}
 	}
 }
 
