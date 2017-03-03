@@ -121,7 +121,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
 		}
 		else if(input.at(i) == '['){
 			v_connectors.push_back(new Connector("[")); // if it's a call for [test]
-			for(unsigned j = 0; j < input.size(); j++){ // search for ] 
+			for(unsigned j = 0; j < input.size(); j++){ // search for ]
 				if(input.at(j) == ']'){
 					input.replace(j,1,"");				// replaces [] bounds with test
 					input.replace(i,1," test ");
@@ -171,6 +171,8 @@ void execute(){
 	int i = 0; // lines iterator
 	if(v_connectors.size() == 0){ //this means
 		// checks if there are any connectors, if not, execute and return
+
+    //the following parses each line into seperate words into command[]
 		stringstream ss(v_lines.at(0)->getParameter());
 		istream_iterator<string> begin(ss);
 		istream_iterator<string> end;
@@ -184,6 +186,8 @@ void execute(){
 		commandVector.push_back(NULL);
 		char **command = &commandVector[0];
 
+
+    // using forking and execvp to execute each seperately parsed argument
 		pid_t pid;
 		int status;
 		if((pid = fork()) < 0){
@@ -191,7 +195,7 @@ void execute(){
 			exit(1);
 		}
 		else if(pid == 0){
-			v_lines.at(i)->trueUsed();
+			v_lines.at(i)->trueUsed(); // executed, so mark as used
 			if(execvp(command[0], command) < 0){
 				cout << "Error: nothing to execute" <<endl;
 				exit(1);
@@ -205,6 +209,8 @@ void execute(){
 	}
 	else{
 		// if there are connectors, execute vline 0 and move on
+
+    //the following parses each line into seperate words into command[]
 		stringstream ss(v_lines.at(i)->getParameter());
 		istream_iterator<string> begin(ss);
 		istream_iterator<string> end;
@@ -218,6 +224,7 @@ void execute(){
 		commandVector.push_back(NULL);
 		char **command = &commandVector[0];
 
+    // using forking and execvp to execute each seperately parsed argument
 		pid_t pid;
 		int status;
 		if((pid = fork()) < 0){
@@ -234,12 +241,19 @@ void execute(){
 		else{
 			while(wait(&status) != pid); // wait for parent
 		}
-		v_lines.at(i)->trueUsed();
+		v_lines.at(i)->trueUsed(); // executed, so mark as used
 		i++;
 	}
+
+
+  //iterates through all the vlines and vconnectors, executing when necessary
 	while(v_connectors.size() > 0 ){ // always delete the connector after usingit
+
+    // if connector is ;
 		if(v_connectors.at(0)->getConnector() == ";"){
       	//always execute lines with ';', and then increment v_lines
+
+      //the following parses each line into seperate words into command[]
 			stringstream ss(v_lines.at(i)->getParameter());
 			istream_iterator<string> begin(ss);
 			istream_iterator<string> end;
@@ -253,6 +267,7 @@ void execute(){
 			commandVector.push_back(NULL);
 			char **command = &commandVector[0];
 
+      // using forking and execvp to execute each seperately parsed argument
 			pid_t pid;
 			int status;
 			if((pid = fork()) < 0){
@@ -270,13 +285,17 @@ void execute(){
 			}
 
 
-		v_connectors.erase(v_connectors.begin());
-		v_lines.at(i)->trueUsed();
+		v_connectors.erase(v_connectors.begin()); // erase current connector
+		v_lines.at(i)->trueUsed(); // executed, so mark as used
 		i++;
 		}
+
+    // if connector is ||
 		else if(v_connectors.at(0)->getConnector() == "||"){
 			// execute if Usage of last parameter is false
 			if(!v_lines.at(i-1)->getUsed()){
+
+      //the following parses each line into seperate words into command[]
 			stringstream ss(v_lines.at(i)->getParameter());
 			istream_iterator<string> begin(ss);
 			istream_iterator<string> end;
@@ -290,6 +309,7 @@ void execute(){
 			commandVector.push_back(NULL);
 			char **command = &commandVector[0];
 
+      // using forking and execvp to execute each seperately parsed argument
 			pid_t pid;
 			int status;
 			if((pid = fork()) < 0){
@@ -305,17 +325,21 @@ void execute(){
 			else{
 				while(wait(&status) != pid); // wait for parent
 			}
-			v_lines.at(i)->trueUsed();
+			v_lines.at(i)->trueUsed(); // executed, so mark as used
     }
     else v_lines.at(i)->falseUsed();
 			i++;
-			v_connectors.erase(v_connectors.begin());
+			v_connectors.erase(v_connectors.begin()); // erase current connector
 		}
+
+    //if connector is &&
 		else if(v_connectors.at(0)->getConnector() == "&&"){
 			//execute if Usage of last parameter is true;
 
 
 			if(v_lines.at(i-1)->getUsed() == true){
+
+      //the following parses each line into seperate words into command[]
 			stringstream ss(v_lines.at(i)->getParameter());
 			istream_iterator<string> begin(ss);
 			istream_iterator<string> end;
@@ -329,6 +353,7 @@ void execute(){
 			commandVector.push_back(NULL);
 			char **command = &commandVector[0];
 
+      // using forking and execvp to execute each seperately parsed argument
 			pid_t pid;
 			int status;
 			if((pid = fork()) < 0){
@@ -336,7 +361,7 @@ void execute(){
 				exit(1);
 			}
 			else if(pid == 0){
-				v_lines.at(i)->trueUsed();
+				v_lines.at(i)->trueUsed(); // executed, so mark as used
 				if(execvp(command[0], command) < 0){
 					cout << "Error: failed to execute" <<endl;
 					exit(1);
@@ -345,16 +370,18 @@ void execute(){
 			else{
 				while(wait(&status) != pid); // wait for parent
 			}
-			v_lines.at(i)->trueUsed();
+			v_lines.at(i)->trueUsed(); // executed, so mark as used
 			}
       i++;
-			v_connectors.erase(v_connectors.begin());
+			v_connectors.erase(v_connectors.begin()); // erase current connector
 		}
+
+    // if connector is a comment indicator
 		else if(v_connectors.at(0)->getConnector() == "#"){
 			// never execute, simply cout, and move on
       cout << "#" << v_lines.at(i)->getParameter() << endl;
 			i++;
-			v_connectors.erase(v_connectors.begin());
+			v_connectors.erase(v_connectors.begin()); // erase current connector
 		}
 	}
 	return;
