@@ -186,7 +186,34 @@ void checkexecute(int endindex){
       // deleting instances of ')'
       if(v_connectors.at(0)->getConnector() == ")"){
         v_connectors.erase(v_connectors.begin());
+
+
+        // ERROR AFTER THIS POINT
+        //logic for opening '(' : recursively call here
+        else if(v_connectors.at(0)->getConnector() == "("){
+          v_connectors.erase(v_connectors.begin()); //delete '('
+          //count for new endindex for closing parenthesis
+          int ending = 1;
+          for(int j = 0; j < v_connectors.size(); j++){
+            if(v_connectors.at(j)->getConnector() == "("){
+              while(1){
+                j++;
+                if(v_connectors.at(j)->getConnector() == ")"){
+                  j++;
+                  break;
+                }
+              }
+            }
+            else{ ending++; }
+            if(v_connectors.at(j)->getConnector() == ")"){
+              j = v_connectors.size();
+            }
+            cout << "here" << endl;
+          }
+          checkexecute(ending);
+        }
       }
+      //ERROR BEFORE THIS POINT
 
       // execute arguments following ';'
       else if(v_connectors.at(0)->getConnector() == ";"){
@@ -276,7 +303,7 @@ void execute(){
 
 /* Functon that prints (TRUE) or (FALSE) depending on the existence of a file / directory
 		takes in a flag:	 "", "-e", "-f", or "-d"
-		also takes in path of file/directory 
+		also takes in path of file/directory
 */
 void test(const string& flags, const string& path_name){
 	char* path_name_c = (char*)path_name.c_str();
