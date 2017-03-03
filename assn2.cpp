@@ -125,7 +125,6 @@ void parse(){                           // Organizes input into v_lines & v_conn
 					p_counter--;
 				}
 				else if(input.at(i) == '['){
-					v_connectors.push_back(new Connector("[")); // if it's a call for [test]
 					for(unsigned j = 0; j < input.size(); j++){ // search for ]
 						if(input.at(j) == ']'){
 							input.replace(j,1,"");				// replaces [] bounds with test
