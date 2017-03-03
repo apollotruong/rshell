@@ -128,7 +128,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
 					for(unsigned j = 0; j < input.size(); j++){ // search for ]
 						if(input.at(j) == ']'){
 							input.replace(j,1,"");				// replaces [] bounds with test
-							input.replace(i,1,"test");
+							input.replace(i,1,"test ");
 							break;
 						}
 					}
@@ -185,34 +185,9 @@ void checkexecute(int endindex){
       // deleting instances of ')'
       if(v_connectors.at(0)->getConnector() == ")"){
         v_connectors.erase(v_connectors.begin());
-
-
-        // ERROR AFTER THIS POINT
-        //logic for opening '(' : recursively call here
-        else if(v_connectors.at(0)->getConnector() == "("){
-          v_connectors.erase(v_connectors.begin()); //delete '('
-          //count for new endindex for closing parenthesis
-          int ending = 1;
-          for(int j = 0; j < v_connectors.size(); j++){
-            if(v_connectors.at(j)->getConnector() == "("){
-              while(1){
-                j++;
-                if(v_connectors.at(j)->getConnector() == ")"){
-                  j++;
-                  break;
-                }
-              }
-            }
-            else{ ending++; }
-            if(v_connectors.at(j)->getConnector() == ")"){
-              j = v_connectors.size();
-            }
-            cout << "here" << endl;
-          }
-          checkexecute(ending);
-        }
       }
-      //ERROR BEFORE THIS POINT
+
+
 
       // execute arguments following ';'
       else if(v_connectors.at(0)->getConnector() == ";"){
@@ -248,7 +223,7 @@ void checkexecute(int endindex){
         finishcounter++;
       }
 
-      //logic for opening '(' : recursively call here
+
 
 
     }
@@ -277,6 +252,10 @@ void execute(){
 		commandVector.push_back(NULL);
 		char **command = &commandVector[0];
 
+    // cout << "commandVector[0] : " << commandVector[0] << endl;
+    // cout << "commandVector[1] : " << commandVector[1] << endl;
+    // cout << "commandVector[2] : " << commandVector[2] << endl;
+    // test(commandVector[1], commandVector[2]);
     string teststring = commandVector[0];
     if(teststring == "test"){ // if the command is test, run test()
       test(commandVector[1], commandVector[2]);
@@ -300,6 +279,7 @@ void execute(){
   		}
     }
   }
+
 
 
   return;
