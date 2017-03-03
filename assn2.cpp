@@ -278,11 +278,8 @@ void execute(){
 		commandVector.push_back(NULL);
 		char **command = &commandVector[0];
 
-    // cout << "commandVector[0] : " << commandVector[0] << endl;
-    // cout << "commandVector[1] : " << commandVector[1] << endl;
-    // cout << "commandVector[2] : " << commandVector[2] << endl;
-    // test(commandVector[1], commandVector[2]);
-    if(commandVector[0] == testchar){ // if the command is test, run test()
+    string teststring = commandVector[0];
+    if(teststring == "test"){ // if the command is test, run test()
       test(commandVector[1], commandVector[2]);
     }
     else{ // if not test, run execvp
