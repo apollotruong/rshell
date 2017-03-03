@@ -79,11 +79,7 @@ void read(){                      	  	// Loads input with cin, also exits if inp
     string read;
     cout << getenv("PWD") << " $ ";     // Prints working dir
     getline(cin, read);                 // Take whatever they input on a line
-    if(read == "exit"){                 // Exit conditional
-            cout << "\nExiting...\n";
-            exit(0);                    // Exit
-    }
-    else{input = read;}                 // Sets class private to read
+    input = read;
 }
 
 void parse(){                           // Organizes input into v_lines & v_connectors
@@ -257,7 +253,12 @@ void execute(){
     // cout << "commandVector[2] : " << commandVector[2] << endl;
     // test(commandVector[1], commandVector[2]);
     string teststring = commandVector[0];
-    if(teststring == "test"){ // if the command is test, run test()
+
+    if(teststring == "exit"){                 // Exit conditional
+            cout << "\nExiting...\n";
+            exit(0);                    // Exit
+    }
+    else if(teststring == "test"){ // if the command is test, run test()
       test(commandVector[1], commandVector[2]);
     }
     else{ // if not test, run execvp
