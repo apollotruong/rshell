@@ -91,7 +91,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
         whitespace++;
     }
     input = input.substr(whitespace);
-	int p_counter = 0;
+		int p_counter = 0;
     for(unsigned i = 0; i < input.size(); i++){                 // Handle ';'
         if(input.at(i) == ';'){
             v_connectors.push_back(new Connector(";"));
@@ -108,36 +108,37 @@ void parse(){                           // Organizes input into v_lines & v_conn
         }
         else if(input.at(i) == '#'){                // If its a comment, do nothing
             if(input.at(i+1) == '#'){
-        	v_connectors.push_back(new Connector("#"));
+        			v_connectors.push_back(new Connector("#"));
             }
         }
-		else if(input.at(i) == '('){
-			v_connectors.push_back(new Connector("(")); // check for a (
-			p_counter++;
-		}
-		else if(input.at(i) == ')'){
-			v_connectors.push_back(new Connector(")")); // check for a )
-			p_counter--;
-		}
-		else if(input.at(i) == '['){
-			v_connectors.push_back(new Connector("[")); // if it's a call for [test]
-			for(unsigned j = 0; j < input.size(); j++){ // search for ]
-				if(input.at(j) == ']'){
-					input.replace(j,1,"");				// replaces [] bounds with test
-					input.replace(i,1," test ");
-					break;
+				else if(input.at(i) == '('){
+					v_connectors.push_back(new Connector("(")); // check for a (
+					p_counter++;
 				}
-			}
-			if(input.at(i) == '['){
-				cout << "Some error with [].";
-				return;
-			}
-		}
+				else if(input.at(i) == ')'){
+					v_connectors.push_back(new Connector(")")); // check for a )
+					p_counter--;
+				}
+				else if(input.at(i) == '['){
+					v_connectors.push_back(new Connector("[")); // if it's a call for [test]
+					for(unsigned j = 0; j < input.size(); j++){ // search for ]
+						if(input.at(j) == ']'){
+							input.replace(j,1,"");				// replaces [] bounds with test
+							input.replace(i,1," test ");
+							break;
+						}
+					}
+						if(input.at(i) == '['){
+							cout << "Some error with [].";
+							return;
+						}
+					}
+		
+    }
 		if(p_counter != 0){ // missing a )
 			cout << "There was a parenthesis error () !\n";
 			return;
 		}
-    }
     char* input_c = (char*)input.c_str();
     char* tok = strtok(input_c, ";|&#");
 
@@ -151,10 +152,10 @@ void parse(){                           // Organizes input into v_lines & v_conn
         v_lines.push_back(new Parameter(temp));
         tok = strtok(NULL, ";|&#");
     }
-	cout << "INPUT IS: " << endl << input << endl;
+	// cout << "INPUT IS: " << endl << input << endl;
 }
 void print(){   // PRINTS v_lines AND v_connectors USED FOR DEBUGGING
-    cout << "v_lines:" << endl;
+    cout << "______________________________" << endl << "v_lines" << endl;
     for(unsigned i = 0; i < v_lines.size(); i++){
         cout << "index " << i << ": " << v_lines.at(i)->getParameter() << endl;
     }
@@ -162,6 +163,7 @@ void print(){   // PRINTS v_lines AND v_connectors USED FOR DEBUGGING
     for(unsigned i = 0; i < v_connectors.size(); i++){
         cout << "index " << i << ": " << v_connectors.at(i)->getConnector() << endl;
     }
+		cout << "______________________________" << endl;
 }
 
 // Execute v_lines according to v_connectors
@@ -399,7 +401,7 @@ int main(){
         if(shello->getInputLength() == 0){} // Empty input -> re-loop
         else{                               // Input is OK
             shello->parse();                // Parse
-            // shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
+            shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
             shello->execute();              // Execute
         }
         delete shello;                      // Goodbye shello :-(
