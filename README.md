@@ -29,16 +29,26 @@ B
 
 # Running Instructions
 
-`git clone https://github.com/apollotruong/rshell.git`
+```
+$ git clone https://github.com/apollotruong/rshell.git
+```
 
-`cd rshell`
+```
+$ cd rshell
+```
 
-`git checkout hw3`
+```
+$ git checkout hw3
+```
 
-`make`
+```
+$ make
+```
 
-`bin/rshell`
+```
+$ bin/rshell
+```
 
 # Known Bugs
 
-- *hold up!*
+- Precedent operators do not work and will have a runtime error
