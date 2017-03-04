@@ -354,14 +354,14 @@ void checkexecute(int endindex){
 */  
 void execute(){
 
-  for(int i = 0; i < v_lines.size(); i++){
+  for(unsigned i = 0; i < v_lines.size(); i++){
     //the following parses each line into seperate words into command[]
 		stringstream ss(v_lines.at(i)->getParameter());
 		istream_iterator<string> begin(ss);
 		istream_iterator<string> end;
 		vector<string> vstrings(begin, end);
 		vector<char *> commandVector;
-		for(int x = 0; x < vstrings.size(); x++){
+		for(unsigned x = 0; x < vstrings.size(); x++){
 			char *temp = new char[vstrings.at(x).length() + 1];
 			strcpy(temp, vstrings.at(x).c_str());
 			commandVector.push_back(temp);
@@ -455,8 +455,8 @@ int getInputLength(){           // Returns input.length();
 */
 void createTree(){
     cout << "debug" << endl;
-    int i = 0;
-    int j = 0;
+    unsigned i = 0;
+    unsigned j = 0;
     Tree tree;
     Node* curr = tree.getRoot();
     /*
@@ -538,7 +538,7 @@ void executeTree(Node* top){
 		istream_iterator<string> end;
 		vector<string> vstrings(begin, end);
 		vector<char *> commandVector;
-		for(int x = 0; x < vstrings.size(); x++){
+		for(unsigned x = 0; x < vstrings.size(); x++){
 			char *temp = new char[vstrings.at(x).length() + 1];
 			strcpy(temp, vstrings.at(x).c_str());
 			commandVector.push_back(temp);
