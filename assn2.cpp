@@ -18,6 +18,104 @@
 
 using namespace std;
 
+/* Implementation of a TREE
+*
+*/
+bool treeo = false;
+class Node{
+    friend class Tree;
+    private:
+    string value;
+    bool ran;
+    Node* parent;
+    Node* left;
+    Node* right;
+    public:
+     Node* getRightChild(){
+        return right;
+    }
+    Node* getLeftChild(){
+        return left;
+    }
+    string getValue(){
+        return value;
+    }
+    void createEmptyParent(){ // makes n empty parent of a node.
+        if(parent){ // if a parent already exists, go up
+            createEmptyParent(parent);
+        }
+        else{
+            Node* nodo = new Node();    // make a new node
+            parent = nodo;       // set parent
+            nodo->left = this;         // set as left child
+        }
+    }
+    void createEmptyParent(Node* nudes){ // makes n empty parent of a node.
+        if(nudes->parent){ // if a parent already exists, go up
+            createEmptyParent(nudes->parent);
+        }
+        else{
+            Node* nodo = new Node();    // make a new node
+            nudes->parent = nodo;       // set parent
+            nodo->left = nudes;         // set as left child
+        }
+    }
+    void createLeftChild(string value){ // with string value
+        Node* nodo = new Node();
+        parent->left = nodo;
+        nodo->parent = parent;
+    }
+
+    void createRightChild(string value){ // with string value
+        Node* nodo = new Node();
+        parent->right = nodo;
+        nodo->parent = parent;
+    }
+
+    void setNodeValue(string s){    // Sets Node value to S
+        value = s;    //
+    }
+    void setLeftChild(Node* lhs, Node* rhs ){   // Sets left child and its parent
+        lhs->parent = rhs;
+        rhs->left = lhs;
+    }
+    void setRightChild(Node* lhs, Node* rhs){   // Sets right child and its parent
+        lhs->parent = rhs;
+        rhs->right = lhs;
+    }
+    void setRanFalse(Node* nodo){
+        nodo->ran = false;
+    }
+    void setRanTrue(Node* nodo){
+        nodo->ran = true;
+    }
+    Node* getParent(){
+        return parent;
+    }
+
+};
+
+class Tree{
+    private: 
+    Node *root;
+
+    public:
+
+    Tree(){
+        Node* nodo = new Node;
+        root = nodo;
+    }
+
+    ~Tree(){}
+    Node* getRoot(){
+        return root;
+    }
+
+    void setRoot(Node* nodo){
+        root = nodo;
+    }
+    
+};
 class Connector;                // Pre-definition of Connector
 class List;						// Pre-definition of List
 class Parameter;                // Pre-definition of Parameter
@@ -75,14 +173,9 @@ string  input;                          // Whole input, (includes connectors)
 
 public:
 List(): lines_counter(0), input(""){}
-void read(){                      	  	// Loads input with cin, also exits if input is exit
-    string read;
-    cout << getenv("PWD") << " $ ";     // Prints working dir
-    getline(cin, read);                 // Take whatever they input on a line
-    input = read;
-}
 
-void parse(){                           // Organizes input into v_lines & v_connectors
+void parse(string& read){                           // Organizes input into v_lines & v_connectors
+    input = read;
     if(getInputLength() == 0){          // Input length should not be 0
         return;
     }
@@ -110,7 +203,8 @@ void parse(){                           // Organizes input into v_lines & v_conn
             }
         }
         else if(input.at(i) == '#'){                // If its a comment, do nothing
-            return;
+            input = input.substr(0,i);
+            break;
         }
 				else if(input.at(i) == '('){
 					v_connectors.push_back(new Connector("(")); // check for a (
@@ -141,7 +235,7 @@ void parse(){                           // Organizes input into v_lines & v_conn
 		}
     char* input_c = (char*)input.c_str();
     char* tok = strtok(input_c, ";|&#()");
-
+// cout << "debuggo 238" << endl;
     while(tok != NULL){
         string temp = tok;
         whitespace = 0;                 // Removing whitespace
@@ -152,7 +246,30 @@ void parse(){                           // Organizes input into v_lines & v_conn
         v_lines.push_back(new Parameter(temp));
         tok = strtok(NULL, ";|&#()");
     }
-	// cout << "INPUT IS: " << endl << input << endl;
+
+    /*  Check case for singular command
+        if so, run like normal
+    */
+	for(unsigned i = 0; i < v_connectors.size(); i++){
+        if(v_connectors.at(i)->getConnector() == "("){
+            if(v_connectors.at(i+1)->getConnector() == ")"){
+                v_connectors.erase(v_connectors.begin()+i);
+                v_connectors.erase(v_connectors.begin()+i);
+                treeo = false;
+            }
+        }
+    }
+
+    // for(unsigned i = 0; i < v_connectors.size(); i++){
+    //     if(v_connectors.at(i)->getConnector() == "("){
+    //         if(v_connectors.at(i+2)->getConnector() == ")"){
+    //             v_connectors.erase(v_connectors.begin()+i);
+    //             v_connectors.erase(v_connectors.begin()+i+1);
+    //             treeo = false;
+    //         }
+    //     }
+    // }
+
 }
 void print(){   // PRINTS v_lines AND v_connectors USED FOR DEBUGGING
     cout << "______________________________" << endl << "v_lines" << endl;
@@ -178,15 +295,19 @@ void checkexecute(int endindex){
     //check logic till v connectors is empty, or hits a paranthesis end
     while(v_connectors.size() > 0 || finishcounter < endindex ){
 
-      // deleting instances of ')'
-      if(v_connectors.at(0)->getConnector() == ")"){
-        v_connectors.erase(v_connectors.begin());
-      }
+    //   // deleting instances of ')'
+    //   if(v_connectors.at(0)->getConnector() == ")"){
+    //     v_connectors.erase(v_connectors.begin());
+    //   }
 
+    //   // deleting instances of '('
+    //   if(v_connectors.at(0)->getConnector() == "("){
+    //       v_connectors.erase(v_connectors.begin());
+    //   }
 
 
       // execute arguments following ';'
-      else if(v_connectors.at(0)->getConnector() == ";"){
+      if(v_connectors.at(0)->getConnector() == ";"){
         vl_it++;
         v_lines.at(vl_it)->trueUsed(); // mark as used
         v_connectors.erase(v_connectors.begin()); //erase ;
@@ -218,13 +339,8 @@ void checkexecute(int endindex){
         v_connectors.erase(v_connectors.begin()); // erase &&
         finishcounter++;
       }
-
-
-
-
     }
   }
-
 
   return;
 }
@@ -268,7 +384,7 @@ void execute(){
   		if((pid = fork()) < 0){
   			cout << "Error: failed to fork child process" << endl;
   			exit(1);
-  		}
+  		} 
   		else if(pid == 0){
   			if(execvp(command[0], command) < 0){
   				cout << "Error: failed to execute" <<endl;
@@ -331,22 +447,164 @@ void test(const string& flags, const string& path_name){
 int getInputLength(){           // Returns input.length();
     return input.length();
 }
-};
+void createTree(){
+    cout << "debug" << endl;
+    int i = 0;
+    int j = 0;
+    Tree tree;
+    Node* curr = tree.getRoot();
+    while(j < v_connectors.size()){
+        if(v_connectors.at(i)->getConnector() == "("){
+            if(curr->getValue() == ""){
+                curr->createLeftChild(v_lines.at(j)->getParameter());
+                j++; i++;cout << "debug1" << endl;
+                curr->setNodeValue(v_connectors.at(i)->getConnector());
+                i++;cout << "debug2" << endl;
+                curr->createEmptyParent();
+                curr->createRightChild("");
+                curr = curr->getRightChild();
+            }
+            else{
+                curr = curr->getRightChild();
+            }    
+        }
+        
+        if(v_connectors.at(i)->getConnector() == "&&"
+        || v_connectors.at(i)->getConnector() == "||"
+        || v_connectors.at(i)->getConnector() == ";"){
+            curr->setNodeValue(v_connectors.at(i)->getConnector());
+            i++;
+            if(curr->getLeftChild() == NULL){
+                curr->createLeftChild(v_lines.at(j)->getParameter());
+                j++;
+                curr->createRightChild("");
+                curr = curr->getRightChild();
+            }
+            else{
+                curr->createRightChild("");
+                curr = curr->getRightChild();
+            }
+        }
+
+        if(v_connectors.at(i)->getConnector() == ")"){
+            curr->setNodeValue(v_lines.at(j)->getParameter());
+            j++;
+            while(curr->getParent()){
+                curr = curr->getParent();
+            }
+        }
+    }
+    if(curr->getValue() == ""){
+        curr = curr->getLeftChild();
+        delete curr->getParent();
+        tree.setRoot(curr);
+    }
+    executeTree(curr);
+}
+
+void executeTree(Node* top){
+    Node* curr = top;
+    if(curr->getValue() == ";" || curr->getValue() == "&&"){
+        if(curr->getLeftChild())
+            executeTree(curr->getLeftChild());
+        if(curr->getRightChild())
+            executeTree(curr->getRightChild());
+
+    }
+    if(curr->getValue() == "||"){
+        executeTree(curr->getLeftChild());
+    }
+    else{
+        stringstream ss(curr->getValue());
+		istream_iterator<string> begin(ss);
+		istream_iterator<string> end;
+		vector<string> vstrings(begin, end);
+		vector<char *> commandVector;
+		for(int x = 0; x < vstrings.size(); x++){
+			char *temp = new char[vstrings.at(x).length() + 1];
+			strcpy(temp, vstrings.at(x).c_str());
+			commandVector.push_back(temp);
+		}
+		commandVector.push_back(NULL);
+		char **command = &commandVector[0];
+
+    // cout << "commandVector[0] : " << commandVector[0] << endl;
+    // cout << "commandVector[1] : " << commandVector[1] << endl;
+    // cout << "commandVector[2] : " << commandVector[2] << endl;
+    // test(commandVector[1], commandVector[2]);
+    string teststring = commandVector[0];
+
+    if(teststring == "exit"){                 // Exit conditional
+            cout << "\nExiting...\n";
+            exit(0);                    // Exit
+    }
+    else if(teststring == "test"){ // if the command is test, run test()
+      test(commandVector[1], commandVector[2]);
+    }
+    else{ // if not test, run execvp
+      // using forking and execvp to execute each seperately parsed argument
+  		pid_t pid;
+  		int status;
+  		if((pid = fork()) < 0){
+  			cout << "Error: failed to fork child process" << endl;
+  			exit(1);
+  		} 
+  		else if(pid == 0){
+  			if(execvp(command[0], command) < 0){
+  				cout << "Error: failed to execute" <<endl;
+  				exit(1);
+  			}
+  		}
+  		else{
+  			while(wait(&status) != pid); // wait for parent
+  		}
+    }
+    }
+}
+}; // End of List class
+
+string read(){                      	  	// Loads input with cin, also exits if input is exit
+    string input;
+    cout << getenv("PWD") << " $ ";     // Prints working dir
+    getline(cin, input);                 // Take whatever they input on a line
+    return input;
+}
 
 int main(){
     while(1){   // Keep looping
         List* shello = new List();  // Make new instance
-        shello->read();             // Read in prompt and read input
-        if(shello->getInputLength() == 0){} // Empty input -> re-loop
+        string poop_input = read();             // Read in prompt and read input
+        if(poop_input.length() == 0){} // Empty input -> re-loop
         else{                               // Input is OK
+            
             numcon = 0;
-            shello->parse();                // Parse
-            shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
 
-            vl_it = 0;
-            shello->checkexecute(numcon);
-						shello->execute();              // Execute
+            /*
+            *    if there is a (, run logic with tree
+            */
+            for(unsigned i = 0; i < poop_input.length(); i++){  
+                if(poop_input.at(i) == '('){                    
+                    treeo = true;
+                }
+            }
+          
+            // cout << "input " << poop_input << endl;
+            shello->parse(poop_input);                // Parse
+
+            if(treeo){
+                // cout << "RUNNING TREE" <<  endl;
+                // shello->print();
+                shello->createTree();       // Tree solving for ( ) precedence
+            }
+            else{
+                // cout << "RUNNING NORMAL" << endl;
+                // shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
+                vl_it = 0;
+                shello->checkexecute(numcon);
+                shello->execute();              // Execute
+            }
         }
+        treeo = false;
         delete shello;                      // Goodbye shello :-(
     }
     return 0;
