@@ -83,10 +83,10 @@ class Node{
     void setRanFalse(Node* nodo){   // Boolean for if a node has been run.
         nodo->ran = false;
     }
-    void setRanTrue(Node* nodo){   
+    void setRanTrue(Node* nodo){
         nodo->ran = true;
     }
-    Node* getParent(){ 
+    Node* getParent(){
         return parent;
     }
 
@@ -96,7 +96,7 @@ class Node{
 *   Puts the arguments and connectors in a tree format to solve for precedence
 */
 class Tree{
-    private: 
+    private:
     Node *root;
 
     public:
@@ -288,7 +288,10 @@ void print(){
 */
 void checkexecute(int endindex){
   // if there are no connectors, dont delete anything
-  if(v_connectors.size() == 0){ return; }
+  if(v_connectors.size() == 0){
+    v_lines.at(0)->trueUsed(); // mark the one and only item as used
+    return;
+  }
   // if there are connectors, start checking which ones to delete
   else{
     //always set the very first argument as used
@@ -324,7 +327,7 @@ void checkexecute(int endindex){
           v_lines.at(vl_it)->trueUsed(); // mark as used
         }
         else{
-          v_lines.erase(v_lines.begin() + vl_it + 1); //erase unused line
+          //v_lines.erase(v_lines.begin() + vl_it + 1); //erase unused line
         }
         v_connectors.erase(v_connectors.begin()); // erase ||
         finishcounter++;
@@ -337,7 +340,7 @@ void checkexecute(int endindex){
           v_lines.at(vl_it)->trueUsed(); // mark as used
         }
         else{
-          v_lines.erase(v_lines.begin() + vl_it + 1); //erase unused line
+          //v_lines.erase(v_lines.begin() + vl_it + 1); //erase unused line
         }
         v_connectors.erase(v_connectors.begin()); // erase &&
         finishcounter++;
@@ -351,54 +354,56 @@ void checkexecute(int endindex){
 /*
 *   void execute shouldnt need to look at v_connectors at all
 *   Will do logic to use execvp to use commands to terminal
-*/  
+*/
 void execute(){
 
   for(unsigned i = 0; i < v_lines.size(); i++){
-    //the following parses each line into seperate words into command[]
-		stringstream ss(v_lines.at(i)->getParameter());
-		istream_iterator<string> begin(ss);
-		istream_iterator<string> end;
-		vector<string> vstrings(begin, end);
-		vector<char *> commandVector;
-		for(unsigned x = 0; x < vstrings.size(); x++){
-			char *temp = new char[vstrings.at(x).length() + 1];
-			strcpy(temp, vstrings.at(x).c_str());
-			commandVector.push_back(temp);
-		}
-		commandVector.push_back(NULL);
-		char **command = &commandVector[0];
-
-    // cout << "commandVector[0] : " << commandVector[0] << endl;
-    // cout << "commandVector[1] : " << commandVector[1] << endl;
-    // cout << "commandVector[2] : " << commandVector[2] << endl;
-    // test(commandVector[1], commandVector[2]);
-    string teststring = commandVector[0];
-
-    if(teststring == "exit"){                 // Exit conditional
-            cout << "\nExiting...\n";
-            exit(0);                    // Exit
-    }
-    else if(teststring == "test"){ // if the command is test, run test()
-      test(commandVector[1], commandVector[2]);
-    }
-    else{ // if not test, run execvp
-      // using forking and execvp to execute each seperately parsed argument
-  		pid_t pid;
-  		int status;
-  		if((pid = fork()) < 0){
-  			cout << "Error: failed to fork child process" << endl;
-  			exit(1);
-  		} 
-  		else if(pid == 0){
-  			if(execvp(command[0], command) < 0){
-  				cout << "Error: failed to execute" <<endl;
-  				exit(1);
-  			}
+    if(v_lines.at(i)->getUsed()){ // only execute lines with getUsed() == TRUE
+      //the following parses each line into seperate words into command[]
+  		stringstream ss(v_lines.at(i)->getParameter());
+  		istream_iterator<string> begin(ss);
+  		istream_iterator<string> end;
+  		vector<string> vstrings(begin, end);
+  		vector<char *> commandVector;
+  		for(unsigned x = 0; x < vstrings.size(); x++){
+  			char *temp = new char[vstrings.at(x).length() + 1];
+  			strcpy(temp, vstrings.at(x).c_str());
+  			commandVector.push_back(temp);
   		}
-  		else{
-  			while(wait(&status) != pid); // wait for parent
-  		}
+  		commandVector.push_back(NULL);
+  		char **command = &commandVector[0];
+
+      // cout << "commandVector[0] : " << commandVector[0] << endl;
+      // cout << "commandVector[1] : " << commandVector[1] << endl;
+      // cout << "commandVector[2] : " << commandVector[2] << endl;
+      // test(commandVector[1], commandVector[2]);
+      string teststring = commandVector[0];
+
+      if(teststring == "exit"){                 // Exit conditional
+              cout << "\nExiting...\n";
+              exit(0);                    // Exit
+      }
+      else if(teststring == "test"){ // if the command is test, run test()
+        test(commandVector[1], commandVector[2]);
+      }
+      else{ // if not test, run execvp
+        // using forking and execvp to execute each seperately parsed argument
+    		pid_t pid;
+    		int status;
+    		if((pid = fork()) < 0){
+    			cout << "Error: failed to fork child process" << endl;
+    			exit(1);
+    		}
+    		else if(pid == 0){
+    			if(execvp(command[0], command) < 0){
+    				cout << "Error: failed to execute" <<endl;
+    				exit(1);
+    			}
+    		}
+    		else{
+    			while(wait(&status) != pid); // wait for parent
+    		}
+      }
     }
   }
   return;
@@ -475,9 +480,9 @@ void createTree(){
             }
             else{
                 curr = curr->getRightChild();
-            }    
+            }
         }
-        
+
         // If the value is a connector...
         if(v_connectors.at(i)->getConnector() == "&&"
         || v_connectors.at(i)->getConnector() == "||"
@@ -514,7 +519,7 @@ void createTree(){
 }
 
 /*
-*   Execute the tree 
+*   Execute the tree
 */
 void executeTree(Node* top){
     Node* curr = top;
@@ -528,7 +533,7 @@ void executeTree(Node* top){
     if(curr->getValue() == "||"){
         executeTree(curr->getLeftChild());
     }
-    
+
     /*  Make a command vector of all the commands to run in the shell
     *   print stuff out to execvp through the command vector afterwards
     */
@@ -566,7 +571,7 @@ void executeTree(Node* top){
   		if((pid = fork()) < 0){
   			cout << "Error: failed to fork child process" << endl;
   			exit(1);
-  		} 
+  		}
   		else if(pid == 0){
   			if(execvp(command[0], command) < 0){
   				cout << "Error: failed to execute" <<endl;
@@ -594,14 +599,14 @@ int main(){
         string poop_input = read();             // Read in prompt and read input
         if(poop_input.length() == 0){} // Empty input -> re-loop
         else{                               // Input is OK
-            
+
             numcon = 0;
 
             /*
             *    if there is a (, run logic with tree
             */
-            for(unsigned i = 0; i < poop_input.length(); i++){  
-                if(poop_input.at(i) == '('){                    
+            for(unsigned i = 0; i < poop_input.length(); i++){
+                if(poop_input.at(i) == '('){
                     treeo = true;
                 }
             }
