@@ -4,6 +4,7 @@
 #include <iostream>
 #include <istream>
 #include <iterator>
+#include <fstream>
 #include <sstream>
 #include <stdio.h>
 #include <string>
@@ -203,32 +204,50 @@ void parse(string& read){                           // Organizes input into v_li
                 v_connectors.push_back(new Connector("||"));    // Handle "||"
                 numcon++;
             }
+            else{
+                v_connectors.push_back(new Connector("|"));
+            }
         }
         else if(input.at(i) == '#'){                // If its a comment, do nothing
             input = input.substr(0,i);
             break;
         }
-				else if(input.at(i) == '('){
-					v_connectors.push_back(new Connector("(")); // check for a (
-					p_counter++;
-				}
-				else if(input.at(i) == ')'){
-					v_connectors.push_back(new Connector(")")); // check for a )
-					p_counter--;
-				}
-				else if(input.at(i) == '['){
-					for(unsigned j = 0; j < input.size(); j++){ // search for ]
-						if(input.at(j) == ']'){
-							input.replace(j,1,"");				// replaces [] bounds with test
-							input.replace(i,1,"test ");
-							break;
-						}
-					}
-						if(input.at(i) == '['){
-							cout << "Some error with [].";
-							return;
-						}
-					}
+        else if(input.at(i) == '('){
+            v_connectors.push_back(new Connector("(")); // check for a (
+            p_counter++;
+        }
+        else if(input.at(i) == ')'){
+            v_connectors.push_back(new Connector(")")); // check for a )
+            p_counter--;
+        }
+        else if(input.at(i) == '['){
+            for(unsigned j = 0; j < input.size(); j++){ // search for ]
+                if(input.at(j) == ']'){
+                    input.replace(j,1,"");				// replaces [] bounds with test
+                    input.replace(i,1,"test ");
+                    break;
+                }
+            }
+            if(input.at(i) == '['){
+                cout << "Some error with [].";
+                return;
+            }
+        }
+        else if(input.at(i) == '<'){
+            v_connectors.push_back(new Connector("<"));
+        }
+
+        /*
+        *   check logic for '>' or '>>'
+        */
+        else if(input.at(i) == '>'){
+            if(input.at(i+1) == '>'){
+                v_connectors.push_back(new Connector(">>"));
+            }
+            else{
+                v_connectors.push_back(new Connector(">"));
+            }
+        }
 
     }
         /*
@@ -251,7 +270,7 @@ void parse(string& read){                           // Organizes input into v_li
         }
         temp = temp.substr(whitespace);
         v_lines.push_back(new Parameter(temp));
-        tok = strtok(NULL, ";|&#()");
+        tok = strtok(NULL, ";|&#()<");
     }
 
     /*  Check case for singular command
