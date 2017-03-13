@@ -244,7 +244,7 @@ void parse(string& read){                           // Organizes input into v_li
         else if(input.at(i) == '>'){
             if(input.at(i+1) == '>'){
                 v_connectors.push_back(new Connector(">>"));
-                i++
+                i++;
             }
             else{
                 v_connectors.push_back(new Connector(">"));
@@ -337,7 +337,8 @@ void checkexecute(int endindex){
       if(v_connectors.at(0)->getConnector() == ";"
       || v_connectors.at(0)->getConnector() == "<"
       || v_connectors.at(0)->getConnector() == ">"
-      || v_connectors.at(0)->getConnector() == ">>"){
+      || v_connectors.at(0)->getConnector() == ">>"
+      || v_connectors.at(0)->getConnector() == "|"){
         vl_it++;
         v_lines.at(vl_it)->trueUsed(); // mark as used
         v_connectors.erase(v_connectors.begin()); //erase ;
