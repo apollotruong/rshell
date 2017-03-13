@@ -261,7 +261,7 @@ void parse(string& read){                           // Organizes input into v_li
     *   Removal of connectors from the string before parsing into argument list
     */
     char* input_c = (char*)input.c_str();
-    char* tok = strtok(input_c, ";|&#()");
+    char* tok = strtok(input_c, ";|&#()<>");
     while(tok != NULL){
         string temp = tok;
         whitespace = 0;                 // Removing whitespace
@@ -270,7 +270,7 @@ void parse(string& read){                           // Organizes input into v_li
         }
         temp = temp.substr(whitespace);
         v_lines.push_back(new Parameter(temp));
-        tok = strtok(NULL, ";|&#()<");
+        tok = strtok(NULL, ";|&#()<>");
     }
 
     /*  Check case for singular command
@@ -332,7 +332,10 @@ void checkexecute(int endindex){
 
 
       // execute arguments following ';'
-      if(v_connectors.at(0)->getConnector() == ";"){
+      if(v_connectors.at(0)->getConnector() == ";"
+      || v_connectors.at(0)->getConnector() == "<"
+      || v_connectors.at(0)->getConnector() == ">"
+      || v_connectors.at(0)->getConnector() == ">>"){
         vl_it++;
         v_lines.at(vl_it)->trueUsed(); // mark as used
         v_connectors.erase(v_connectors.begin()); //erase ;
@@ -635,7 +638,7 @@ int main(){
                 shello->createTree();       // Tree solving for ( ) precedence
             }
             else{
-                // shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
+                shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
                 vl_it = 0;
                 shello->checkexecute(numcon);
                 shello->execute();              // Execute
