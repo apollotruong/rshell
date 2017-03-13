@@ -203,6 +203,7 @@ void parse(string& read){                           // Organizes input into v_li
             if(input.at(i+1) == '|'){
                 v_connectors.push_back(new Connector("||"));    // Handle "||"
                 numcon++;
+                i++;
             }
             else{
                 v_connectors.push_back(new Connector("|"));
@@ -243,6 +244,7 @@ void parse(string& read){                           // Organizes input into v_li
         else if(input.at(i) == '>'){
             if(input.at(i+1) == '>'){
                 v_connectors.push_back(new Connector(">>"));
+                i++;
             }
             else{
                 v_connectors.push_back(new Connector(">"));
