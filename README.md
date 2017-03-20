@@ -57,4 +57,6 @@ $ bin/rshell
 # Known Bugs
 
 - `test` will not run with other bash commands
+- `test` will not run with redirection
+- cd does not work with rshell
 
