@@ -125,7 +125,7 @@ class Parameter;                // Pre-definition of Parameter
 class Rshell;                   // Pre-definition of Rshell
 int vl_it;          //global v_lines iterator
 int numcon;
-
+string user_input;
 class Rshell{
 public:
 Rshell(){}
@@ -390,6 +390,7 @@ void execute(){
   		istream_iterator<string> end;
   		vector<string> vstrings(begin, end);
   		vector<char *> commandVector;
+        
   		for(unsigned x = 0; x < vstrings.size(); x++){
   			char *temp = new char[vstrings.at(x).length() + 1];
   			strcpy(temp, vstrings.at(x).c_str());
@@ -403,15 +404,17 @@ void execute(){
       // cout << "commandVector[2] : " << commandVector[2] << endl;
       // test(commandVector[1], commandVector[2]);
       string teststring = commandVector[0];
-
+      
       if(teststring == "exit"){                 // Exit conditional
               cout << "\nExiting...\n";
               exit(0);                    // Exit
       }
-      else if(teststring == "test"){ // if the command is test, run test()
+      
+      if(teststring == "test"){ // if the command is test, run test()
         test(commandVector[1], commandVector[2]);
       }
-      else{ // if not test, run execvp
+      system(user_input.c_str()); return;
+      if(1){ // if not test, run execvp
         // using forking and execvp to execute each seperately parsed argument
     		pid_t pid;
     		int status;
@@ -615,6 +618,7 @@ string read(){                      	  	// Loads input with cin, also exits if i
     string input;
     cout << getenv("PWD") << " $ ";     // Prints working dir
     getline(cin, input);                 // Take whatever they input on a line
+    user_input = input;
     return input;
 }
 
