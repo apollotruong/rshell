@@ -4,6 +4,8 @@
 #include <iostream>
 #include <istream>
 #include <iterator>
+#include <errno.h>
+#include <fcntl.h>
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
@@ -292,6 +294,25 @@ void parse(string& read){                           // Organizes input into v_li
 /*
 *   PRINTS v_lines AND v_connectors USED FOR DEBUGGING
 */
+
+bool redirect (string filename){
+	int out;
+	char* test = (char*)filename.c_str();
+
+	//open output files
+	if((out = open(test, O_WRONLY | O_APPEND | O_CREAT, S_IRUSR | S_IRGRP  | S_IWGRP | S_IWUSR)) == -1){
+		cout << "ERROR: " << filename << "does not exist, skipping redirection/piping step" << endl;
+    return false;
+	}
+	//replace standard output with output file
+	dup2(out, 1);
+	if(close(out)== -1){
+		perror("Was unable to close xD");
+		return false;
+	}
+  return true;
+}
+
 void print(){
     cout << "______________________________" << endl << "v_lines" << endl;
     for(unsigned i = 0; i < v_lines.size(); i++){
@@ -385,12 +406,14 @@ void execute(){
   for(unsigned i = 0; i < v_lines.size(); i++){
     if(v_lines.at(i)->getUsed()){ // only execute lines with getUsed() == TRUE
       //the following parses each line into seperate words into command[]
+      bool topipe = false; // bool to check if to run the piping or redirection if statement
+      string redir_value; // the type of redirection or piping
   		stringstream ss(v_lines.at(i)->getParameter());
   		istream_iterator<string> begin(ss);
   		istream_iterator<string> end;
   		vector<string> vstrings(begin, end);
   		vector<char *> commandVector;
-        
+
   		for(unsigned x = 0; x < vstrings.size(); x++){
   			char *temp = new char[vstrings.at(x).length() + 1];
   			strcpy(temp, vstrings.at(x).c_str());
@@ -404,16 +427,43 @@ void execute(){
       // cout << "commandVector[2] : " << commandVector[2] << endl;
       // test(commandVector[1], commandVector[2]);
       string teststring = commandVector[0];
-      
+
       if(teststring == "exit"){                 // Exit conditional
               cout << "\nExiting...\n";
               exit(0);                    // Exit
       }
-      
+
       if(teststring == "test"){ // if the command is test, run test()
         test(commandVector[1], commandVector[2]);
+        return;
       }
-      system(user_input.c_str()); return;
+      system(user_input.c_str()); cout << endl; return; 
+      if(topipe){// if catches any sign of redirection or piping, run this to execute it correctly
+        if(redir_value == "<"){ // then input redirection
+          string redirect_input = v_lines.at(i)->getParameter();
+          if(redirect(redirect_input)){ // make sure the file exists
+            string redirect_destination = redirect_input;
+          }
+        }
+        else if(redir_value == ">"){ // then output redirection
+          string redirect_output = v_lines.at(i)->getParameter();
+          if(redirect(redirect_output)){ // make sure the file exists
+            string redirect_destination = redirect_output;
+          }
+        }
+        else if(redir_value == ">>"){ // then output append
+          string append_input = v_lines.at(i)->getParameter();
+          if(redirect(append_input)){ // make sure the file exists
+            string redirect_destination = append_input;
+          }
+        }
+        else if(redir_value == "|"){ // then pipe
+          string pipe_input = v_lines.at(i)->getParameter();
+          if(redirect(pipe_input)){ // make sure the file exists
+            string pipe_output = pipe_input;
+          }
+        }
+      }
       if(1){ // if not test, run execvp
         // using forking and execvp to execute each seperately parsed argument
     		pid_t pid;
