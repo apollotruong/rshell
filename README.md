@@ -26,6 +26,11 @@ $ ( echo A && echo B ) || ( echo C && echo D )
 A
 B
 ```
+Example #4
+- Make sure 'input.txt' exists.
+```
+$ cat < input.txt | tr A-Z a-z | tee output1.txt | tr a-z A-Z > output2.txt
+```
 
 # Running Instructions
 
@@ -38,7 +43,7 @@ $ cd rshell
 ```
 
 ```
-$ git checkout hw3
+$ git checkout hw4
 ```
 
 ```
@@ -51,4 +56,7 @@ $ bin/rshell
 
 # Known Bugs
 
-- Precedent operators do not work and will have a runtime error
+- `test` will not run with other bash commands
+- `test` will not run with redirection
+- cd does not work with rshell
+
