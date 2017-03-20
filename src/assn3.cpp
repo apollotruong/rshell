@@ -437,7 +437,7 @@ void execute(){
         test(commandVector[1], commandVector[2]);
         return;
       }
-      system(user_input.c_str()); cout << endl; return; 
+      system(user_input.c_str()); return; 
       if(topipe){// if catches any sign of redirection or piping, run this to execute it correctly
         if(redir_value == "<"){ // then input redirection
           string redirect_input = v_lines.at(i)->getParameter();
@@ -695,7 +695,7 @@ int main(){
                 shello->createTree();       // Tree solving for ( ) precedence
             }
             else{
-                shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
+                // shello->print();             // Print v_lines and v_connectors; (USED FOR DEBUGGING)
                 vl_it = 0;
                 shello->checkexecute(numcon);
                 shello->execute();              // Execute
